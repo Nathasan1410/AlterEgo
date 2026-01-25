@@ -438,9 +438,9 @@ export async function polishPostContent(
   `;
 
   const trace = opik.trace({
-    name: "Polish_Post",
+    name: "Self_Correction_Agent", // Renamed for Hackathon "Agentic" narrative
     input: { content, tone, emojiDensity, language },
-    tags: ["production", "linkedin-agent", "polish"],
+    tags: ["production", "linkedin-agent", "critique-loop"],
   });
 
   try {
