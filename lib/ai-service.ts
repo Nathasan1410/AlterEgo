@@ -54,20 +54,26 @@ export type ModelId = keyof typeof ALLOWED_MODELS;
 // ============================================
 
 export const getToneInstruction = (toneValue: number = 5): string => {
-  if (toneValue <= 3) {
-    return `**TONE: AUTHORITATIVE & ANALYTICAL** - Use professional language, numbered lists, frameworks.`;
+  if (toneValue <= 2) {
+    return `CRITICAL TONE INSTRUCTION: STRICTLY FORMAL & AUTHORITATIVE. Use academic/corporate vocabulary. No slang. Zero casualness.`;
+  }
+  if (toneValue <= 4) {
+    return `TONE: Professional & Structured. Clear, concise, and business-focused.`;
   }
   if (toneValue <= 6) {
-    return `**TONE: BALANCED** - Mix formal and casual, professional but approachable.`;
+    return `TONE: Balanced Professional. Friendly but credible. Approachable expert voice.`;
   }
-  return `**TONE: SOCIAL & CONVERSATIONAL** - Casual language, emoji bullets, personal anecdotes.`;
+  if (toneValue <= 8) {
+    return `TONE: Casual & Conversational. Write like you're talking to a friend. Use contractions (I'm, It's).`;
+  }
+  return `CRITICAL TONE INSTRUCTION: HIGHLY CASUAL & FUN. Use slang, idioms, and loose grammar. extremely personal and emotional.`;
 };
 
 export const getEmojiInstruction = (emojiLevel: string | number = 'moderate'): string => {
   let level: string;
   if (typeof emojiLevel === 'number') {
-    if (emojiLevel <= 2) level = 'none';
-    else if (emojiLevel <= 4) level = 'minimal';
+    if (emojiLevel <= 1) level = 'none';
+    else if (emojiLevel <= 3) level = 'minimal';
     else if (emojiLevel <= 7) level = 'moderate';
     else level = 'rich';
   } else {
@@ -75,10 +81,10 @@ export const getEmojiInstruction = (emojiLevel: string | number = 'moderate'): s
   }
 
   switch (level) {
-    case 'none': return `**EMOJI: NONE** - No emojis at all.`;
-    case 'minimal': return `**EMOJI: MINIMAL** - 1-2 emojis max.`;
-    case 'moderate': return `**EMOJI: MODERATE** - 3-5 emojis, tasteful.`;
-    case 'rich': return `**EMOJI: RICH** - 5+ emojis, lively.`;
+    case 'none': return `STRICT RULE: DO NOT USE ANY EMOJIS. ZERO EMOJIS.`;
+    case 'minimal': return `EMOJI USAGE: Use exactly 1-2 emojis total. Preferred at the end of paragraphs.`;
+    case 'moderate': return `EMOJI USAGE: Use 3-5 emojis. Good for bullet points or emphasis.`;
+    case 'rich': return `EMOJI USAGE: Heavy emoji usage (5+). Use them in bullet points, headers, and for emotion.`;
     default: return getEmojiInstruction('moderate');
   }
 };
@@ -358,6 +364,7 @@ export async function generateCTA(
   4. Soft Sell (Newsletter/Link)
   
   Return ONLY a JSON array of strings.
+  Example: ["Agree?", "Link in bio!"]
   `;
 
   const trace = opik.trace({
@@ -369,12 +376,13 @@ export async function generateCTA(
   try {
     const completion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'llama-3.1-8b-instant',
+      model: 'llama-3.3-70b-versatile', // UPGRADED from 8b
       temperature: 0.7,
     });
 
     const content = completion.choices[0]?.message?.content || '[]';
     const cleanJson = content.replace(/```json|```/g, '').trim();
+    // ... (rest of parsing logic)
     const ctas = JSON.parse(cleanJson);
 
     trace.end();
@@ -410,18 +418,21 @@ export async function polishPostContent(
   const opik = getOpikClient();
 
   const prompt = `
-  Polish this LinkedIn post.
+  You are an expert Editor. Polish this LinkedIn post.
   
   Content:
   ${content}
   
-  Instructions:
+  CRITICAL INSTRUCTIONS:
   ${getToneInstruction(tone)}
   ${getEmojiInstruction(emojiDensity)}
   ${getLanguageInstruction(language)}
-  - Fix grammar and flow
-  - Improve readability with line breaks
-  - Add 3 relevant hashtags at the bottom
+  
+  Steps:
+  1. Fix grammar and flow.
+  2. Improve readability with line breaks.
+  3. Add 3 relevant hashtags at the bottom.
+  4. DO NOT change the core meaning or facts.
   
   Return ONLY the final polished text.
   `;
@@ -435,7 +446,7 @@ export async function polishPostContent(
   try {
     const completion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'llama-3.1-8b-instant',
+      model: 'llama-3.3-70b-versatile', // UPGRADED from 8b
     });
 
     const polished = completion.choices[0]?.message?.content || content;
@@ -485,13 +496,13 @@ export async function generateFinal(
     name: "Generate_Final_Post",
     input: { hook, body: body.substring(0, 200), context, ctaType },
     tags: ["production", "linkedin-agent", "final-assembly"],
-    metadata: { model: "llama-3.1-8b-instant" }
+    metadata: { model: "llama-3.3-70b-versatile" } // Updated metadata
   });
 
   try {
     const completion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'llama-3.1-8b-instant',
+      model: 'llama-3.3-70b-versatile', // UPGRADED from 8b
       response_format: { type: "json_object" }
     });
 
