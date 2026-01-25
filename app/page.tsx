@@ -8,7 +8,7 @@ import Sidebar from '@/components/Sidebar';
 import { Linkedin } from 'lucide-react';
 
 export default function Home() {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 
   return (
     <main className="min-h-screen bg-[#050505] text-white">

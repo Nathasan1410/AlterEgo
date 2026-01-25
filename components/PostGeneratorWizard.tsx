@@ -346,10 +346,21 @@ export default function PostGeneratorWizard() {
                     </pre>
                     <div className="mt-6 flex gap-4 flex-wrap">
                         <Button onClick={() => { navigator.clipboard.writeText(deck.final || '') }}>Copy Text</Button>
-                        <Button variant="outline" onClick={handleRePolish} disabled={loading}>
+                        <Button 
+                            variant="outline" 
+                            onClick={handleRePolish} 
+                            disabled={loading}
+                            className="text-white border-zinc-600 hover:bg-zinc-800 hover:text-white"
+                        >
                             {loading ? 'Re-polishing...' : 'Re-Polish'}
                         </Button>
-                        <Button variant="outline" onClick={reset}>Start Over</Button>
+                        <Button 
+                            variant="outline" 
+                            onClick={reset}
+                            className="text-white border-zinc-600 hover:bg-zinc-800 hover:text-white"
+                        >
+                            Start Over
+                        </Button>
                     </div>
                 </div>
             </div>
