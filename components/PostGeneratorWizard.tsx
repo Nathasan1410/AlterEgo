@@ -350,14 +350,16 @@ export default function PostGeneratorWizard() {
                             variant="outline" 
                             onClick={handleRePolish} 
                             disabled={loading}
-                            className="text-white border-zinc-600 hover:bg-zinc-800 hover:text-white"
+                            style={{ color: '#ffffff', borderColor: '#52525b' }}
+                            className="hover:bg-zinc-800"
                         >
                             {loading ? 'Re-polishing...' : 'Re-Polish'}
                         </Button>
                         <Button 
                             variant="outline" 
                             onClick={reset}
-                            className="text-white border-zinc-600 hover:bg-zinc-800 hover:text-white"
+                            style={{ color: '#ffffff', borderColor: '#52525b' }}
+                            className="hover:bg-zinc-800"
                         >
                             Start Over
                         </Button>
