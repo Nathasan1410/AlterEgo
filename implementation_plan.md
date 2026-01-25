@@ -1,37 +1,41 @@
-# Implementation Plan - AI Quality Upgrade (AlterEgo)
+# Implementation Plan - AI Quality & UX Upgrade (OpikAI)
 
-The user reported that the AI output quality is "agak agak" (mediocre) and settings (scale) don't seem to apply properly. To fix this, we will upgrade the underlying models and refine the prompt engineering.
+## Status
+- [x] AI Model Upgrade (Llama 3.3 70B)
+- [x] Prompt Engineering Refinement
+- [x] Focus Mode (Distraction-Free UI)
+- [x] Viral Score Indicator (Opik Metrics)
 
 ## Goal
-Improve the quality of generated content (Hooks, Body, CTA, Polish) and ensure "Tone" and "Emoji" settings are strictly followed by the AI.
+Improve the quality of generated content and enhance the user experience with professional "Focus Mode" and real-time "Viral Score" feedback.
 
 ## User Review Required
-No major breaking changes, but AI latency might increase slightly due to using a larger model (70B vs 8B).
+No major breaking changes. AI latency might increase slightly due to using a larger model (70B vs 8B) and score calculation.
 
-## Proposed Changes
+## Completed Changes
 
-### `lib/ai-service.ts`
+### 1. AI Quality (`lib/ai-service.ts`)
+*   **Model Upgrade**: Switched to `llama-3.3-70b-versatile` for all generation tasks.
+*   **Prompt Refinement**: Enhanced Tone and Emoji instructions for stricter adherence.
 
-1.  **Model Upgrade**:
-    *   Change `generateCTA` from `llama-3.1-8b-instant` to `llama-3.3-70b-versatile`.
-    *   Change `polishPostContent` from `llama-3.1-8b-instant` to `llama-3.3-70b-versatile`.
-    *   Change `generateFinal` from `llama-3.1-8b-instant` to `llama-3.3-70b-versatile`.
-    *   *Rationale*: 70B models follow complex instructions (like "Tone: 3") much better than 8B models.
+### 2. Focus Mode (`components/`)
+*   **New Component**: `FocusSummary.tsx` - a compact strip showing the prompt and active settings.
+*   **Logic**: `PostGeneratorWizard.tsx` now hides the large input area during the building phase.
 
-2.  **Prompt Refinement**:
-    *   Update `getToneInstruction`: Make instructions more explicit and "forceful" (e.g., using "CRITICAL INSTRUCTION").
-    *   Update `getEmojiInstruction`: Ensure "None" really means ZERO emojis.
-    *   Update `polishPostContent`: Add "retain original meaning" to prevents hallucinations during polishing.
+### 3. Viral Score Indicator (`lib/scoring.ts`)
+*   **New Library**: `scoring.ts` containing `scoreHook`, `scoreBody`, and `calculateTotalScore`.
+*   **UI Integration**: Added a "Viral Score Card" to the result view in `PostGeneratorWizard.tsx`.
+*   **Metrics**:
+    *   **Hook**: Patterns (?, !), Conciseness, Power Words.
+    *   **Body**: Word count optimization, Formatting.
+    *   **CTA**: Engagement checks.
 
 ## Verification Plan
 
+### Automated Tests
+*   `npm run build`: Ensure strict type safety for new components.
+*   `npm run evaluate`: Run the backend evaluation script to verify scoring logic alignment.
+
 ### Manual Verification
-1.  **Redeploy to Vercel**.
-2.  **Test "Tone" Slider**:
-    *   Set Tone to 0 (Formal). Generate Post. -> Expect professional, stiff language.
-    *   Set Tone to 10 (Casual). Generate Post. -> Expect slang, lowercase, loose grammar.
-3.  **Test "Emoji" Slider**:
-    *   Set Emoji to "None". -> Expect 0 emojis.
-    *   Set Emoji to "Rich". -> Expect 5+ emojis.
-4.  **Quality Check**:
-    *   Read the "Polish" result. It should not look robotically summarized.
+1.  **Focus Mode**: Start a draft -> Verify Input disappears -> Verify Summary appears.
+2.  **Viral Score**: Finish a draft -> Polish -> Verify Score Card appears with correct breakdown (Green/Yellow indicators).
