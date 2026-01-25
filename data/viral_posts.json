@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "intent": "viral",
+    "length": "short",
+    "body": "Unpopular opinion:\n\nThe best career advice I ever got?\n\n\"Stop networking. Start helping.\"\n\nEvery meaningful connection I've made came from offering value first.\n\nNo expectations. No strings attached.\n\nThat's the secret nobody talks about."
+  },
+  {
+    "id": 2,
+    "intent": "storytelling",
+    "length": "medium",
+    "body": "3 years ago, I was mass-applying to 50+ jobs per week.\n\nZero responses.\n\nThen I changed one thing:\n\nI stopped being a resume.\nI started being a story.\n\nInstead of listing skills, I shared projects.\nInstead of buzzwords, I showed results.\nInstead of \"experienced in X\", I said \"built Y that did Z\".\n\nWithin 2 weeks, 5 interviews.\n\nThe job market isn't broken.\nYour positioning might be."
+  },
+  {
+    "id": 3,
+    "intent": "educational",
+    "length": "long",
+    "body": "I've reviewed 500+ LinkedIn profiles this year.\n\nHere's what separates the top 1%:\n\n1. They lead with outcomes, not responsibilities\n2. Their headline is a value proposition, not a job title\n3. They post consistently (even if it's just once a week)\n4. They engage genuinely (not just \"Great post!\")\n5. They tell stories that make you feel something\n\nThe algorithm doesn't favor luck.\nIt favors consistency and authenticity.\n\nWhich one are you working on?"
+  },
+  {
+    "id": 4,
+    "intent": "promotional",
+    "length": "medium",
+    "body": "I spent 6 months building something I'm really proud of.\n\nA framework for writing LinkedIn posts that actually get seen.\n\nNot engagement bait.\nNot cringe humblebrags.\n\nJust authentic content that resonates.\n\nI've used it to grow from 500 to 15,000 followers.\n\nAnd now I'm sharing it for free.\n\nDrop a comment if you want the link."
+  },
+  {
+    "id": 5,
+    "intent": "viral",
+    "length": "short",
+    "body": "Hot take:\n\nYour resume doesn't get you the job.\nYour story does.\n\nCompanies hire people, not paper."
+  }
+]

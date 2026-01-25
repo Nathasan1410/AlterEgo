@@ -1,0 +1,34 @@
+{
+  "name": "commit-to-career",
+  "version": "1.0.0",
+  "description": "AI Agent for Professional Growth - Hackathon Submission",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "evaluate": "npx tsx scripts/runEvaluation.ts"
+  },
+  "dependencies": {
+    "@tavily/core": "^0.7.1",
+    "framer-motion": "^12.29.0",
+    "groq-sdk": "^0.5.0",
+    "lucide-react": "^0.563.0",
+    "next": "^16.1.4",
+    "next-themes": "^0.4.6",
+    "opik": "^1.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.4",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3"
+  }
+}
