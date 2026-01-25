@@ -127,11 +127,11 @@ const getViralContext = (count = 2, intent = 'viral', length = 'medium') => {
 export async function generateHooks(topic: string, intent: string = 'viral') {
   const groq = getGroqClient();
   const opik = getOpikClient();
-  
-  const dateContext = new Date().toLocaleDateString('en-US', { 
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+
+  const dateContext = new Date().toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
-  
+
   const prompt = `
   You are a viral LinkedIn Ghostwriter.
   Current Date: ${dateContext}.
@@ -171,7 +171,7 @@ export async function generateHooks(topic: string, intent: string = 'viral') {
     });
 
     const content = completion.choices[0]?.message?.content || '[]';
-    
+
     llmSpan.end();
 
     const cleanJson = content.replace(/```json|```/g, '').trim();
@@ -255,7 +255,7 @@ export async function generateBody(
 ) {
   const groq = getGroqClient();
   const opik = getOpikClient();
-  
+
   const viralExamples = getViralContext(2, intent, length)
     .map((post, i) => `[Example ${i + 1}]\n${post.body}`)
     .join('\n\n');
@@ -313,7 +313,7 @@ export async function generateBody(
     });
 
     const content = completion.choices[0]?.message?.content || '{}';
-    
+
     llmSpan.end();
 
     const cleanContent = content.replace(/```json|```/g, '');
@@ -378,14 +378,14 @@ export async function generateCTA(
     const ctas = JSON.parse(cleanJson);
 
     trace.end();
-    
+
     // Ensure we return strings, not objects
     if (Array.isArray(ctas)) {
       return ctas.map(item => {
         if (typeof item === 'string') return item;
         if (typeof item === 'object' && item !== null) {
           // If LLM returns { cta: "text", type: "value" }, extract the text
-          return item.cta || item.text || item.content || JSON.stringify(item);
+          return item.cta || item.Cta || item.CTA || item.text || item.content || JSON.stringify(item);
         }
         return String(item);
       });
@@ -451,14 +451,14 @@ export async function polishPostContent(
  * Generate Final Post with CTA and Hashtags
  */
 export async function generateFinal(
-  hook: string, 
-  body: string, 
-  context: string, 
+  hook: string,
+  body: string,
+  context: string,
   ctaType: 'value' | 'promotional' | 'none' = 'value'
 ) {
   const groq = getGroqClient();
   const opik = getOpikClient();
-  
+
   let ctaInstruction = '';
   if (ctaType === 'none') {
     ctaInstruction = 'NO CTA. Just end the post.';
@@ -524,7 +524,7 @@ export async function generateCompletePost(
   } = {}
 ) {
   const opik = getOpikClient();
-  
+
   // PARENT TRACE - Shows full workflow in Opik
   const parentTrace = opik.trace({
     name: "Complete_Post_Generation",
@@ -534,10 +534,10 @@ export async function generateCompletePost(
   });
 
   try {
-    const { 
-      intent = 'viral', 
-      length = 'medium', 
-      tone = 5, 
+    const {
+      intent = 'viral',
+      length = 'medium',
+      tone = 5,
       emojiLevel = 'moderate',
       language = 'id',
       ctaType = 'value'
