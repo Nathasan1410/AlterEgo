@@ -25,6 +25,7 @@ interface PolishParams {
 
 interface PolishResponse {
   result: string;
+  scores?: any[]; // Opik scores
   error?: string;
 }
 
@@ -87,6 +88,15 @@ export async function polishPost(params: PolishParams): Promise<PolishResponse> 
     }
 
     const data = await response.json();
+    
+    // Handle new object return structure { polished: string, scores: [] }
+    if (data.result && typeof data.result === 'object' && data.result.polished) {
+      return { 
+        result: data.result.polished, 
+        scores: data.result.scores 
+      };
+    }
+
     return { result: data.result || data.polished || '' };
   } catch (error) {
     console.error('Error polishing post:', error);

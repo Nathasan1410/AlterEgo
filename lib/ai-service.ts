@@ -4,6 +4,7 @@
 import { Groq } from 'groq-sdk';
 import { Opik } from 'opik';
 import viralPosts from '@/data/viral_posts.json';
+import { evaluatePost } from '@/lib/opik-evaluators';
 
 // ============================================
 // CLIENTS
@@ -450,11 +451,15 @@ export async function polishPostContent(
     });
 
     const polished = completion.choices[0]?.message?.content || content;
+    
+    // Evaluate
+    const scores = await evaluatePost(polished);
+
     trace.end();
-    return polished;
+    return { polished, scores };
   } catch (error) {
     trace.end();
-    return content;
+    return { polished: content, scores: [] };
   }
 }
 
@@ -568,12 +573,16 @@ export async function generateCompletePost(
     // Step 3: Assemble Final
     const final = await generateFinal(selectedHook, selectedBody, topic, ctaType);
 
+    // Evaluate
+    const scores = await evaluatePost(final.finalPost);
+
     const result = {
       hook: selectedHook,
       body: selectedBody,
       finalPost: final.finalPost,
       allHooks: hooks,
-      bodyOptions
+      bodyOptions,
+      scores
     };
 
     parentTrace.end();
