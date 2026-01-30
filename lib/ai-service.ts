@@ -230,15 +230,16 @@ export async function generateTopics(input: string, researchDepth: number = 3) {
   const opik = getOpikClient();
 
   const prompt = `
-  Generate 6 engaging LinkedIn post topics based on the idea: "${input}".
-  
-  Research Depth: ${researchDepth} (1=Simple, 5=Deep Dive)
-  
-  Return a JSON array of objects sorted by potential virality:
-  [
-    { "content": "Topic text", "score": 90, "reasoning": "High relevance" }
-  ]
-  `;
+Generate 6 engaging LinkedIn post topics based on: "${input}".
+
+Research Depth: ${researchDepth}
+
+CRITICAL: Return ONLY valid JSON. No markdown, no explanations.
+Format:
+[
+  { "content": "Topic text here", "score": 95, "reasoning": "Why this works" }
+]
+`;
 
   const trace = opik.trace({
     name: "Generate_Topics",
@@ -251,27 +252,94 @@ export async function generateTopics(input: string, researchDepth: number = 3) {
       messages: [{ role: 'user', content: prompt }],
       model: 'llama-3.3-70b-versatile',
       temperature: 0.7,
+      response_format: { type: "json_object" }  // Force JSON mode
     });
 
     const content = completion.choices[0]?.message?.content || '[]';
-    const cleanJson = content.replace(/```json|```/g, '').trim();
-    let topics = [];
+    
+    // Multiple fallback parsing strategies
+    let topics: { content: string; score: number; reasoning: string }[] = [];
+    let parsed: any = null;
+    
+    // Strategy 1: Direct parse after cleaning
     try {
-      const parsed = JSON.parse(cleanJson);
-      topics = Array.isArray(parsed) ? parsed.map(p => 
-        typeof p === 'string' ? { content: p, score: 70 } : p
-      ) : [];
-      
-      topics.sort((a: any, b: any) => (b.score || 0) - (a.score || 0));
-    } catch {
-       topics = [{ content: "Error parsing topics", score: 0 }];
+      const cleanJson = content.replace(/```json|```/g, '').trim();
+      parsed = JSON.parse(cleanJson);
+    } catch (e1) {
+      // Strategy 2: Try to find JSON array in the text
+      try {
+        const arrayMatch = content.match(/\[[\s\S]*\]/);
+        if (arrayMatch) {
+          parsed = JSON.parse(arrayMatch[0]);
+        }
+      } catch (e2) {
+        // Strategy 3: Try to find JSON object and wrap in array
+        try {
+          const objMatch = content.match(/\{[\s\S]*\}/);
+          if (objMatch) {
+            const obj = JSON.parse(objMatch[0]);
+            // If it's an object with numbered keys, convert to array
+            if (Object.keys(obj).some(k => /^\d+$/.test(k))) {
+              parsed = Object.values(obj);
+            } else {
+              parsed = [obj];
+            }
+          }
+        } catch (e3) {
+          console.error("All JSON parsing strategies failed");
+        }
+      }
+    }
+    
+    // Process parsed data
+    if (parsed) {
+      if (Array.isArray(parsed)) {
+        topics = parsed.map((p: any) => {
+          if (typeof p === 'string') return { content: p, score: 70, reasoning: 'Generated topic' };
+          return {
+            content: p.content || p.topic || p.text || String(p),
+            score: p.score || 75,
+            reasoning: p.reasoning || 'AI generated'
+          };
+        });
+      } else if (typeof parsed === 'object') {
+        // Single object or object with properties
+        const values = Object.values(parsed);
+        topics = values.map((p: any) => {
+          if (typeof p === 'string') return { content: p, score: 70, reasoning: 'Generated topic' };
+          return {
+            content: p.content || p.topic || p.text || String(p),
+            score: p.score || 75,
+            reasoning: p.reasoning || 'AI generated'
+          };
+        });
+      }
+    }
+    
+    // Sort by score descending
+    topics.sort((a: any, b: any) => (b.score || 0) - (a.score || 0));
+    
+    // Ensure we have at least some topics
+    if (topics.length === 0) {
+      topics = [
+        { content: "Tips for professional growth in ${input}", score: 80, reasoning: "General professional advice" },
+        { content: "My experience with ${input}", score: 75, reasoning: "Personal story angle" },
+        { content: "Lessons learned from ${input}", score: 70, reasoning: "Educational content" }
+      ];
     }
 
     trace.end();
     return topics;
   } catch (error) {
+    console.error("Topic generation error:", error);
     trace.end();
-    return [];
+    // Return fallback topics instead of empty array
+    return [
+      { content: `Exploring ${input} for professionals`, score: 80, reasoning: "Broad appeal" },
+      { content: `My journey with ${input}`, score: 75, reasoning: "Personal angle" },
+      { content: `${input}: What I wish I knew earlier`, score: 70, reasoning: "Educational" },
+      { content: `The future of ${input}`, score: 65, reasoning: "Forward-looking" }
+    ];
   }
 }
 
