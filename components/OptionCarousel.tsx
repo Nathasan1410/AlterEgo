@@ -2,11 +2,12 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RefreshCw, Star } from 'lucide-react';
 import Card from './ui/Card';
+import { GeneratedOption } from '@/lib/api-client';
 
 interface OptionCarouselProps {
-    options: string[];
+    options: (string | GeneratedOption)[];
     onSelect: (option: string) => void;
     onRegenerate: () => void;
     itemsPerPage: number;
@@ -36,6 +37,10 @@ export default function OptionCarousel({
     const isCtaNoCtaPage = stepType === 'cta' && currentPage === totalOptionPages;
     const isRegeneratePage = stepType === 'cta' ? currentPage === totalPages - 1 : currentPage === totalPages - 1;
     
+    const getContent = (opt: string | GeneratedOption) => typeof opt === 'string' ? opt : opt.content;
+    const getScore = (opt: string | GeneratedOption) => typeof opt === 'string' ? null : opt.score;
+    const getReasoning = (opt: string | GeneratedOption) => typeof opt === 'string' ? null : opt.reasoning;
+
     const nextPage = () => {
         if (currentPage < totalPages - 1) {
             setCurrentPage(currentPage + 1);
@@ -178,20 +183,33 @@ export default function OptionCarousel({
                             /* Body Step: Single option */
                             currentOptions.map((opt, i) => {
                                 const globalIndex = currentPage * itemsPerPage + i;
+                                const content = getContent(opt);
+                                const score = getScore(opt);
+                                const reasoning = getReasoning(opt);
+
                                 return (
                                     <Card
                                         key={globalIndex}
                                         variant="default"
                                         className="p-8 cursor-pointer hover:border-orange-500 hover:shadow-xl transition-all group relative"
-                                        onClick={() => onSelect(opt)}
+                                        onClick={() => onSelect(content)}
                                     >
                                         <div className="flex items-start gap-4">
                                             <div className="flex-shrink-0 w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center font-bold text-lg text-orange-600 dark:text-orange-400">
                                                 {String.fromCharCode(65 + globalIndex)}
                                             </div>
                                             <div className="flex-1">
+                                                {score !== null && (
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <span className="px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-500 text-xs font-bold border border-teal-500/20 flex items-center gap-1">
+                                                            <Star className="w-3 h-3 fill-current" />
+                                                            {score}/100 Engagement
+                                                        </span>
+                                                        {reasoning && <span className="text-xs text-gray-500 truncate max-w-[200px]">{reasoning}</span>}
+                                                    </div>
+                                                )}
                                                 <p className="text-base md:text-lg text-gray-900 dark:text-gray-100 leading-relaxed font-medium group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors whitespace-pre-wrap break-words">
-                                                    {opt}
+                                                    {content}
                                                 </p>
                                             </div>
                                         </div>
@@ -202,20 +220,35 @@ export default function OptionCarousel({
                             /* Regular Options */
                             currentOptions.map((opt, i) => {
                                 const globalIndex = currentPage * itemsPerPage + i;
+                                const content = getContent(opt);
+                                const score = getScore(opt);
+                                const reasoning = getReasoning(opt);
+
                                 return (
                                     <Card
                                         key={globalIndex}
                                         variant="default"
                                         className="p-6 cursor-pointer hover:border-orange-500 hover:shadow-xl transition-all group"
-                                        onClick={() => onSelect(opt)}
+                                        onClick={() => onSelect(content)}
                                     >
                                         <div className="flex items-start gap-4">
                                             <div className="flex-shrink-0 w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center font-bold text-orange-600 dark:text-orange-400">
                                                 {String.fromCharCode(65 + globalIndex)}
                                             </div>
-                                            <p className="flex-1 text-base md:text-lg text-gray-900 dark:text-gray-100 leading-relaxed font-medium group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors whitespace-normal break-words">
-                                                {opt}
-                                            </p>
+                                            <div className="flex-1">
+                                                {score !== null && (
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-500 text-xs font-bold border border-teal-500/20 flex items-center gap-1">
+                                                            <Star className="w-3 h-3 fill-current" />
+                                                            {score}
+                                                        </span>
+                                                        {reasoning && <span className="text-xs text-gray-500">{reasoning}</span>}
+                                                    </div>
+                                                )}
+                                                <p className="text-base md:text-lg text-gray-900 dark:text-gray-100 leading-relaxed font-medium group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors whitespace-normal break-words">
+                                                    {content}
+                                                </p>
+                                            </div>
                                         </div>
                                     </Card>
                                 );

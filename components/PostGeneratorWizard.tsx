@@ -13,6 +13,8 @@ import { Button, Card, Skeleton } from './ui';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
 
+import { GeneratedOption } from '@/lib/api-client';
+
 // Types
 type CraftingPhase = 'input' | 'building' | 'confirm' | 'result';
 type DeckType = {
@@ -40,7 +42,7 @@ export default function PostGeneratorWizard() {
     // The "Hand" (Current options to choose from)
     const [hand, setHand] = useState<{
         type: 'topics' | 'hooks' | 'body' | 'cta' | null;
-        options: string[] | { optionA: string, optionB: string } | null;
+        options: (string | GeneratedOption)[] | null;
     }>({ type: null, options: null });
 
     // Settings
@@ -74,10 +76,10 @@ export default function PostGeneratorWizard() {
     
     // Cache generated options to avoid regeneration on back navigation
     const [optionsCache, setOptionsCache] = useState<{
-        topics?: string[];
-        hooks?: string[];
-        body?: string[];
-        cta?: string[];
+        topics?: (string | GeneratedOption)[];
+        hooks?: (string | GeneratedOption)[];
+        body?: (string | GeneratedOption)[];
+        cta?: (string | GeneratedOption)[];
     }>({});
     
     // --- Actions ---
@@ -105,7 +107,7 @@ export default function PostGeneratorWizard() {
     // 2. Select Topic -> Fetch Hooks
     const selectTopic = async (topic: string) => {
         if (hand.options && Array.isArray(hand.options)) {
-            setOptionsCache(prev => ({ ...prev, topics: hand.options as string[] }));
+            setOptionsCache(prev => ({ ...prev, topics: hand.options! }));
             setNavigationHistory(prev => [...prev, 'topics']);
         }
         
@@ -129,7 +131,7 @@ export default function PostGeneratorWizard() {
     // 3. Select Hook -> Fetch Body (NO PAYMENT - removed Web3)
     const selectHook = async (hook: string) => {
         if (hand.options && Array.isArray(hand.options)) {
-             setOptionsCache(prev => ({ ...prev, hooks: hand.options as string[] }));
+             setOptionsCache(prev => ({ ...prev, hooks: hand.options! }));
              setNavigationHistory(prev => [...prev, 'hooks']);
         }
 
@@ -155,7 +157,7 @@ export default function PostGeneratorWizard() {
     // 4. Select Body -> Fetch CTA
     const selectBody = async (body: string) => {
         if (hand.options && Array.isArray(hand.options)) {
-            setOptionsCache(prev => ({ ...prev, body: hand.options as string[] }));
+            setOptionsCache(prev => ({ ...prev, body: hand.options! }));
             setNavigationHistory(prev => [...prev, 'body']);
         }
         
@@ -179,7 +181,7 @@ export default function PostGeneratorWizard() {
     // 5. Select CTA -> Go to Confirmation
     const selectCTA = async (cta: string) => {
         if (hand.options && Array.isArray(hand.options)) {
-            setOptionsCache(prev => ({ ...prev, cta: hand.options as string[] }));
+            setOptionsCache(prev => ({ ...prev, cta: hand.options! }));
             setNavigationHistory(prev => [...prev, 'cta']);
         }
         

@@ -152,7 +152,14 @@ export async function generateHooks(topic: string, intent: string = 'viral') {
   2. Styles: Storytelling, Educational, Promotional, Viral
   3. Keep it punchy and scroll-stopping.
 
-  Return ONLY a JSON array of strings.
+  Return a JSON array of objects:
+  [
+    { 
+      "content": "Hook text here", 
+      "score": 85, 
+      "reasoning": "Why this hook works" 
+    }
+  ]
   `;
 
   // START OPIK TRACE
@@ -178,26 +185,40 @@ export async function generateHooks(topic: string, intent: string = 'viral') {
     });
 
     const content = completion.choices[0]?.message?.content || '[]';
-
+    
     llmSpan.end();
 
     const cleanJson = content.replace(/```json|```/g, '').trim();
     let hooks = [];
     try {
       const parsed = JSON.parse(cleanJson);
-      hooks = Array.isArray(parsed) ? parsed : (parsed.result || parsed.hooks || []);
+      // Handle both old array of strings and new array of objects
+      hooks = Array.isArray(parsed) ? parsed.map(p => 
+        typeof p === 'string' ? { content: p, score: 70, reasoning: 'Generated legacy hook' } : p
+      ) : [];
+      
+      // Sort by score descending
+      hooks.sort((a: any, b: any) => (b.score || 0) - (a.score || 0));
+      
     } catch (e) {
       // Fallback regex parsing
-      hooks = content.match(/"([^"]*)"/g)?.map(s => s.replace(/"/g, '')) || [];
+      const matches = content.match(/"content":\s*"([^"]*)"/g);
+      if (matches) {
+         hooks = matches.map(m => ({ 
+             content: m.replace(/"content":\s*"/, '').replace(/"$/, ''),
+             score: 75,
+             reasoning: 'Parsed from fallback'
+         }));
+      }
     }
 
     trace.end();
-    return hooks.slice(0, 5); // Return up to 5 hooks
+    return hooks.slice(0, 5); 
 
   } catch (error) {
     trace.end();
     console.error("Hook generation error:", error);
-    return ["Hook generation failed - please try again"];
+    return [{ content: "Hook generation failed", score: 0 }];
   }
 }
 
@@ -213,7 +234,10 @@ export async function generateTopics(input: string, researchDepth: number = 3) {
   
   Research Depth: ${researchDepth} (1=Simple, 5=Deep Dive)
   
-  Return ONLY a JSON array of strings. Example: ["Topic 1", "Topic 2"]
+  Return a JSON array of objects sorted by potential virality:
+  [
+    { "content": "Topic text", "score": 90, "reasoning": "High relevance" }
+  ]
   `;
 
   const trace = opik.trace({
@@ -233,13 +257,18 @@ export async function generateTopics(input: string, researchDepth: number = 3) {
     const cleanJson = content.replace(/```json|```/g, '').trim();
     let topics = [];
     try {
-      topics = JSON.parse(cleanJson);
+      const parsed = JSON.parse(cleanJson);
+      topics = Array.isArray(parsed) ? parsed.map(p => 
+        typeof p === 'string' ? { content: p, score: 70 } : p
+      ) : [];
+      
+      topics.sort((a: any, b: any) => (b.score || 0) - (a.score || 0));
     } catch {
-      topics = content.split('\n').filter(l => l.includes('"')).map(l => l.replace(/^[-\d.]+\s*"?|"?$/g, ''));
+       topics = [{ content: "Error parsing topics", score: 0 }];
     }
 
     trace.end();
-    return Array.isArray(topics) ? topics : [];
+    return topics;
   } catch (error) {
     trace.end();
     return [];
@@ -294,7 +323,14 @@ export async function generateBody(
   ${viralExamples}
   
   Write 2 distinct versions (Option A and Option B).
-  Return JSON: { "optionA": "text...", "optionB": "text..." }
+  Return JSON array of objects sorted by engagement potential:
+  [
+    { 
+      "content": "Body text here...", 
+      "score": 92, 
+      "reasoning": "Strong storytelling and emotion" 
+    }
+  ]
   `;
 
   // START OPIK TRACE
@@ -316,29 +352,36 @@ export async function generateBody(
     const completion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
       model: 'llama-3.3-70b-versatile',
-      response_format: { type: "json_object" }
+      temperature: 0.7,
     });
 
     const content = completion.choices[0]?.message?.content || '{}';
-
+    
     llmSpan.end();
 
-    const cleanContent = content.replace(/```json|```/g, '');
-    const parsed = JSON.parse(cleanContent);
-    const result = parsed.result || parsed;
+    const cleanContent = content.replace(/```json|```/g, '').trim();
+    let bodyOptions = [];
+    try {
+      const parsed = JSON.parse(cleanContent);
+      bodyOptions = Array.isArray(parsed) ? parsed : Object.values(parsed).filter(v => typeof v === 'object' || typeof v === 'string').map(v => 
+        typeof v === 'string' ? { content: v, score: 80 } : v
+      );
+      
+      // Sort
+      bodyOptions.sort((a: any, b: any) => (b.score || 0) - (a.score || 0));
+    } catch {
+      // Fallback
+      bodyOptions = [{ content: "Error parsing body", score: 0 }];
+    }
 
     trace.end();
 
-    // Standardize to array for frontend
-    if (result.optionA && result.optionB) {
-      return [result.optionA, result.optionB];
-    }
-    return Object.values(result).filter(v => typeof v === 'string');
+    return bodyOptions;
 
   } catch (error) {
     trace.end();
     console.error("Body generation error:", error);
-    return ["Generation failed. Please try again."];
+    return [{ content: "Generation failed. Please try again.", score: 0 }];
   }
 }
 
@@ -364,8 +407,14 @@ export async function generateCTA(
   3. Debate (Provoke discussion)
   4. Soft Sell (Newsletter/Link)
   
-  Return ONLY a JSON array of strings.
-  Example: ["Agree?", "Link in bio!"]
+  Return JSON array of objects sorted by conversion power:
+  [
+    { 
+      "content": "CTA text...", 
+      "score": 88, 
+      "reasoning": "Direct and actionable" 
+    }
+  ]
   `;
 
   const trace = opik.trace({
@@ -383,26 +432,24 @@ export async function generateCTA(
 
     const content = completion.choices[0]?.message?.content || '[]';
     const cleanJson = content.replace(/```json|```/g, '').trim();
-    // ... (rest of parsing logic)
-    const ctas = JSON.parse(cleanJson);
+    
+    let ctas = [];
+    try {
+      const parsed = JSON.parse(cleanJson);
+      ctas = Array.isArray(parsed) ? parsed.map(p => 
+        typeof p === 'string' ? { content: p, score: 75 } : p
+      ) : [];
+      
+      ctas.sort((a: any, b: any) => (b.score || 0) - (a.score || 0));
+    } catch {
+      ctas = [{ content: "Thoughts?", score: 50 }];
+    }
 
     trace.end();
-
-    // Ensure we return strings, not objects
-    if (Array.isArray(ctas)) {
-      return ctas.map(item => {
-        if (typeof item === 'string') return item;
-        if (typeof item === 'object' && item !== null) {
-          // If LLM returns { cta: "text", type: "value" }, extract the text
-          return item.cta || item.Cta || item.CTA || item.text || item.content || JSON.stringify(item);
-        }
-        return String(item);
-      });
-    }
-    return [];
+    return ctas;
   } catch (error) {
     trace.end();
-    return ["Thoughts?", "Agree?", "Let me know in the comments 👇", "Follow for more!"];
+    return [{ content: "Thoughts?", score: 50 }];
   }
 }
 

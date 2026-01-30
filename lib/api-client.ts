@@ -3,6 +3,12 @@
 
 export type GenerationType = 'topics' | 'hooks' | 'body' | 'cta';
 
+export interface GeneratedOption {
+  content: string;
+  score?: number;
+  reasoning?: string;
+}
+
 interface GenerateContentParams {
   input: string;
   context?: string;
@@ -12,7 +18,7 @@ interface GenerateContentParams {
 }
 
 interface GenerateContentResponse {
-  result: string[];
+  result: GeneratedOption[] | string[];
   error?: string;
 }
 
