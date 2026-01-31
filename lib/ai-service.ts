@@ -391,10 +391,13 @@ export async function generateBody(
   ${viralExamples}
   
   Write 2 distinct versions (Option A and Option B).
-  Return JSON array of objects sorted by engagement potential:
+  
+  CRITICAL: Return a JSON ARRAY of objects. The "content" field MUST be the full post body text, NOT a number.
+  
+  Format:
   [
     { 
-      "content": "Body text here...", 
+      "content": "Full body text goes here. It should be multiple sentences long...", 
       "score": 92, 
       "reasoning": "Strong storytelling and emotion" 
     }
@@ -421,6 +424,7 @@ export async function generateBody(
       messages: [{ role: 'user', content: prompt }],
       model: 'llama-3.3-70b-versatile',
       temperature: 0.7,
+      response_format: { type: "json_object" }
     });
 
     const content = completion.choices[0]?.message?.content || '{}';
@@ -431,15 +435,33 @@ export async function generateBody(
     let bodyOptions = [];
     try {
       const parsed = JSON.parse(cleanContent);
-      bodyOptions = Array.isArray(parsed) ? parsed : Object.values(parsed).filter(v => typeof v === 'object' || typeof v === 'string').map(v => 
-        typeof v === 'string' ? { content: v, score: 80 } : v
-      );
       
+      // Handle array or object wrapper
+      const rawItems = Array.isArray(parsed) ? parsed : 
+                       (parsed.options || parsed.result || parsed.body || Object.values(parsed));
+                       
+      bodyOptions = Array.isArray(rawItems) ? rawItems.map(v => 
+        typeof v === 'string' ? { content: v, score: 80 } : v
+      ) : [];
+      
+      // Validate content
+      bodyOptions = bodyOptions.map((opt: any) => {
+          // If content is missing or is just a number
+          if (!opt.content || (String(opt.content).length < 5 && !isNaN(Number(opt.content)))) {
+              return { 
+                  content: "Content generation failed. Please try regenerating.", 
+                  score: 0,
+                  reasoning: "Invalid output from AI"
+              };
+          }
+          return opt;
+      });
+
       // Sort
       bodyOptions.sort((a: any, b: any) => (b.score || 0) - (a.score || 0));
     } catch {
       // Fallback
-      bodyOptions = [{ content: "Error parsing body", score: 0 }];
+      bodyOptions = [{ content: "Error parsing body options", score: 0 }];
     }
 
     trace.end();
