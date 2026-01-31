@@ -37,9 +37,15 @@ Tone: {{tone}}/10
 Style Context: {{styleProfile}}
 Research Context: {{researchContext}}
 
-Return ONLY valid JSON array:
+CRITICAL: Return a JSON ARRAY of objects. The "content" field MUST be the full post body text (multiple sentences). DO NOT return a number in the content field.
+
+Format:
 [
-  { "content": "Body text here...", "score": 88, "reasoning": "Engagement factors" }
+  { 
+    "content": "Full body text goes here. It should be engaging and relevant...", 
+    "score": 88, 
+    "reasoning": "Engagement factors" 
+  }
 ]
 `,
 

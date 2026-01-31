@@ -126,12 +126,21 @@ export class GroqAdapter implements IModelAdapter {
       try {
         const parsed = strategy();
         if (Array.isArray(parsed)) {
-          return parsed.map((p: any) => ({
-            content: p.content || p.text || p.topic || p.hook || p.cta || String(p),
-            score: p.score || 75,
-            reasoning: p.reasoning || 'AI generated',
-            metadata: p.metadata
-          })).sort((a, b) => (b.score || 0) - (a.score || 0));
+          return parsed.map((p: any) => {
+            let content = p.content || p.text || p.topic || p.hook || p.cta || String(p);
+            
+            // Validation: If content looks like a score number, reject it
+            if (String(content).length < 5 && !isNaN(Number(content))) {
+                content = "Content generation failed (invalid format). Please try again.";
+            }
+
+            return {
+              content,
+              score: p.score || 75,
+              reasoning: p.reasoning || 'AI generated',
+              metadata: p.metadata
+            };
+          }).sort((a, b) => (b.score || 0) - (a.score || 0));
         }
       } catch {
         continue;
