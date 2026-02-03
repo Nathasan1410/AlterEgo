@@ -8,7 +8,7 @@ import { TopicInput, HookInput, BodyInput, CTAInput, PolishInput } from "../../m
 
 export class PromptBuilder {
   static buildTopicsPrompt(input: TopicInput): string {
-    return PROMPT_TEMPLATES.TOPICS.replace("{{idea}}", input.idea).replace(
+    return PROMPT_TEMPLATES.TOPICS.replace("{{idea}}", input.input).replace(
       "{{researchDepth}}",
       (input.researchDepth || 3).toString()
     );

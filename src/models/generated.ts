@@ -13,7 +13,7 @@ export interface GeneratedOption {
 
 // Input types for generation
 export interface TopicInput {
-  idea: string;
+  input: string;
   researchDepth?: number;
   language?: string;
 }

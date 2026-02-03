@@ -9,7 +9,7 @@ import {
 } from "../lib/constants";
 
 export const TopicInputSchema = z.object({
-  idea: z
+  input: z
     .string()
     .min(GENERATION_LIMITS.MIN_TOPIC_LENGTH, "Topic must be at least 3 characters")
     .max(GENERATION_LIMITS.MAX_TOPIC_LENGTH, "Topic cannot exceed 500 characters"),

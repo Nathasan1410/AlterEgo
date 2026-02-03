@@ -66,7 +66,7 @@ export class GenerationOrchestrator {
       });
 
       // Future: Use researchAdapter if input.researchDepth > 3
-      // const research = await this.researchAdapter.search(input.idea);
+      // const research = await this.researchAdapter.search(input.input);
 
       const result = await this.modelAdapter.generateTopics(input);
 
