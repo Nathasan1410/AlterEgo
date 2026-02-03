@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import PostGeneratorWizard from "@/src/components/features/post-generator/PostGeneratorWizard";
 import DarkVeilBackground from "@/src/components/layout/DarkVeilBackground";
@@ -9,32 +9,6 @@ import { Linkedin } from "lucide-react";
 
 export default function Home() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-    console.log("[Home] Component mounted successfully");
-  }, []);
-
-  if (!isMounted) {
-    return (
-      <main className="min-h-screen bg-[#050505] text-white">
-        <DarkVeilBackground />
-        <Sidebar
-          isCollapsed={isSidebarCollapsed}
-          onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-        />
-        <div
-          style={{ paddingLeft: isSidebarCollapsed ? "72px" : "280px" }}
-          className="relative z-10 min-h-screen"
-        >
-          <div className="container mx-auto pt-4">
-            <PostGeneratorWizard />
-          </div>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className="min-h-screen bg-[#050505] text-white">
@@ -48,7 +22,6 @@ export default function Home() {
 
       {/* Main Content Area - Dynamic Padding */}
       <motion.div
-        initial={{ paddingLeft: isSidebarCollapsed ? "72px" : "280px" }}
         animate={{ paddingLeft: isSidebarCollapsed ? "72px" : "280px" }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="relative z-10 min-h-screen"
