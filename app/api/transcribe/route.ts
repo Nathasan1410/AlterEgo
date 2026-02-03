@@ -1,52 +1,70 @@
 // Voice Transcription API - Groq Whisper
-import { NextRequest, NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
+import { NextRequest, NextResponse } from "next/server";
+import Groq from "groq-sdk";
+import {
+  createResponse,
+  createValidationErrorResponse,
+  createErrorResponse,
+} from "@/src/utils/apiResponse";
+import { validateFormData } from "@/src/utils/validation";
+import { TranscriptionInputSchema } from "@/src/schemas/generation";
+import { ERROR_CODES } from "@/src/lib/constants";
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+
   try {
     const formData = await request.formData();
-    const audioFile = formData.get('audio') as File;
-    const language = formData.get('language') as string || 'id';
 
-    if (!audioFile) {
+    const validated = validateFormData(TranscriptionInputSchema, formData);
+    if (!validated.success) {
       return NextResponse.json(
-        { error: 'No audio file provided' },
+        createResponse(null, { code: ERROR_CODES.VALIDATION_ERROR, message: validated.error! }, 0),
         { status: 400 }
       );
     }
 
+    const { audio, language } = validated.data;
+    const file = audio as File;
+
     // Convert File to Buffer for Groq
-    const arrayBuffer = await audioFile.arrayBuffer();
+    const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
     // Create a File-like object for Groq
-    const file = new File([buffer], audioFile.name, { type: audioFile.type });
+    const groqFile = new File([buffer], file.name, { type: file.type });
 
     // Transcribe using Groq Whisper
     const transcription = await groq.audio.transcriptions.create({
-      file: file,
-      model: 'whisper-large-v3',
+      file: groqFile,
+      model: "whisper-large-v3",
       language: language,
-      response_format: 'json',
+      response_format: "json",
       temperature: 0.0,
     });
 
-    console.log('[Transcription] Success:', transcription.text?.slice(0, 100));
+    console.log("[Transcription] Success:", transcription.text?.slice(0, 100));
 
-    return NextResponse.json({
-      success: true,
-      text: transcription.text,
-      language: language,
-    });
+    const duration = (Date.now() - startTime) / 1000;
 
-  } catch (error) {
-    console.error('Transcription error:', error);
     return NextResponse.json(
-      { error: 'Failed to transcribe audio' },
+      createResponse(
+        { text: transcription.text, language, duration },
+        undefined,
+        Date.now() - startTime
+      )
+    );
+  } catch (error) {
+    console.error("Transcription error:", error);
+    return NextResponse.json(
+      createErrorResponse(
+        error instanceof Error ? error.message : "Failed to transcribe audio",
+        ERROR_CODES.API_ERROR
+      ),
       { status: 500 }
     );
   }

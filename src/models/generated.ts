@@ -20,7 +20,7 @@ export interface TopicInput {
 
 export interface HookInput {
   topic: string;
-  intent?: 'viral' | 'storytelling' | 'educational';
+  intent?: "viral" | "storytelling" | "educational";
   language?: string;
 }
 
@@ -28,9 +28,9 @@ export interface BodyInput {
   hook: string;
   topic: string;
   intent?: string;
-  length?: 'short' | 'medium' | 'long';
+  length?: "short" | "medium" | "long";
   tone?: number;
-  emojiLevel?: string;
+  emojiLevel?: number;
   language?: string;
   styleProfile?: string;
   researchContext?: string;
@@ -50,7 +50,7 @@ export interface PolishInput {
 }
 
 // Generation stages
-export type GenerationStage = 'topics' | 'hooks' | 'body' | 'cta' | 'polish' | 'complete';
+export type GenerationStage = "topics" | "hooks" | "body" | "cta" | "polish" | "complete";
 
 // Evaluation result
 export interface EvaluationResult {

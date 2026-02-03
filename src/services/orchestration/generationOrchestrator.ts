@@ -3,21 +3,21 @@
  * Coordinates the flow of content generation across different adapters
  */
 
-import { 
-  IModelAdapter, 
-  IResearchAdapter, 
+import {
+  IModelAdapter,
+  IResearchAdapter,
   IObservabilityAdapter,
-  ICacheAdapter
-} from '../adapters/interfaces';
-import { 
-  GeneratedOption, 
-  TopicInput, 
-  HookInput, 
-  BodyInput, 
-  CTAInput, 
-  PolishInput 
-} from '../../models/generated';
-import { evaluateContent } from '../../evaluators';
+  ICacheAdapter,
+} from "../adapters/interfaces";
+import {
+  GeneratedOption,
+  TopicInput,
+  HookInput,
+  BodyInput,
+  CTAInput,
+  PolishInput,
+} from "../../models/generated";
+import { evaluateContent } from "../../evaluators";
 
 export class GenerationOrchestrator {
   private modelAdapter: IModelAdapter;
@@ -26,7 +26,7 @@ export class GenerationOrchestrator {
   private cacheAdapter?: ICacheAdapter;
 
   constructor(
-    modelAdapter: IModelAdapter, 
+    modelAdapter: IModelAdapter,
     researchAdapter: IResearchAdapter,
     observabilityAdapter: IObservabilityAdapter,
     cacheAdapter?: ICacheAdapter
@@ -60,16 +60,18 @@ export class GenerationOrchestrator {
    * Optionally enriches with research if depth is high
    */
   async generateTopics(input: TopicInput): Promise<GeneratedOption[]> {
-    return this.withCache(this.getCacheKey('topics', input), async () => {
-        const trace = this.observabilityAdapter.trace('Generate_Topics', input, { tags: ['orchestrator', 'topics'] });
-        
-        // Future: Use researchAdapter if input.researchDepth > 3
-        // const research = await this.researchAdapter.search(input.idea);
-        
-        const result = await this.modelAdapter.generateTopics(input);
-        
-        trace.end();
-        return result;
+    return this.withCache(this.getCacheKey("topics", input), async () => {
+      const trace = this.observabilityAdapter.trace("Generate_Topics", input, {
+        tags: ["orchestrator", "topics"],
+      });
+
+      // Future: Use researchAdapter if input.researchDepth > 3
+      // const research = await this.researchAdapter.search(input.idea);
+
+      const result = await this.modelAdapter.generateTopics(input);
+
+      trace.end();
+      return result;
     });
   }
 
@@ -77,11 +79,13 @@ export class GenerationOrchestrator {
    * Step 2: Generate Hooks
    */
   async generateHooks(input: HookInput): Promise<GeneratedOption[]> {
-    return this.withCache(this.getCacheKey('hooks', input), async () => {
-        const trace = this.observabilityAdapter.trace('Generate_Hooks', input, { tags: ['orchestrator', 'hooks'] });
-        const result = await this.modelAdapter.generateHooks(input);
-        trace.end();
-        return result;
+    return this.withCache(this.getCacheKey("hooks", input), async () => {
+      const trace = this.observabilityAdapter.trace("Generate_Hooks", input, {
+        tags: ["orchestrator", "hooks"],
+      });
+      const result = await this.modelAdapter.generateHooks(input);
+      trace.end();
+      return result;
     });
   }
 
@@ -90,18 +94,20 @@ export class GenerationOrchestrator {
    * Injects style and research context
    */
   async generateBody(input: BodyInput): Promise<GeneratedOption[]> {
-    return this.withCache(this.getCacheKey('body', input), async () => {
-        const trace = this.observabilityAdapter.trace('Generate_Body', input, { tags: ['orchestrator', 'body'] });
+    return this.withCache(this.getCacheKey("body", input), async () => {
+      const trace = this.observabilityAdapter.trace("Generate_Body", input, {
+        tags: ["orchestrator", "body"],
+      });
 
-        // If research context is requested but not provided, fetch it
-        if (!input.researchContext && input.topic && input.topic.length > 5) {
-            // Only fetch if explicit intention (logic can be refined)
-            // input.researchContext = await this.researchAdapter.getPostContext(input.topic);
-        }
+      // If research context is requested but not provided, fetch it
+      if (!input.researchContext && input.topic && input.topic.length > 5) {
+        // Only fetch if explicit intention (logic can be refined)
+        // input.researchContext = await this.researchAdapter.getPostContext(input.topic);
+      }
 
-        const result = await this.modelAdapter.generateBody(input);
-        trace.end();
-        return result;
+      const result = await this.modelAdapter.generateBody(input);
+      trace.end();
+      return result;
     });
   }
 
@@ -109,11 +115,13 @@ export class GenerationOrchestrator {
    * Step 4: Generate CTA
    */
   async generateCTA(input: CTAInput): Promise<GeneratedOption[]> {
-    return this.withCache(this.getCacheKey('cta', input), async () => {
-        const trace = this.observabilityAdapter.trace('Generate_CTA', input, { tags: ['orchestrator', 'cta'] });
-        const result = await this.modelAdapter.generateCTA(input);
-        trace.end();
-        return result;
+    return this.withCache(this.getCacheKey("cta", input), async () => {
+      const trace = this.observabilityAdapter.trace("Generate_CTA", input, {
+        tags: ["orchestrator", "cta"],
+      });
+      const result = await this.modelAdapter.generateCTA(input);
+      trace.end();
+      return result;
     });
   }
 
@@ -123,19 +131,21 @@ export class GenerationOrchestrator {
   async polishContent(input: PolishInput): Promise<{ content: string; scores?: any[] }> {
     // Polish is usually unique, maybe shorter TTL or no cache
     // But let's cache it for consistency
-    return this.withCache(this.getCacheKey('polish', input), async () => {
-        const trace = this.observabilityAdapter.trace('Polish_Content', input, { tags: ['orchestrator', 'polish'] });
-        
-        const result = await this.modelAdapter.polishContent(input);
-        
-        // Evaluate result
-        const scores = await evaluateContent(result.content);
-        
-        // Log evaluation
-        this.observabilityAdapter.logEvaluation(input, result.content, scores);
-        
-        trace.end();
-        return { content: result.content, scores };
+    return this.withCache(this.getCacheKey("polish", input), async () => {
+      const trace = this.observabilityAdapter.trace("Polish_Content", input, {
+        tags: ["orchestrator", "polish"],
+      });
+
+      const result = await this.modelAdapter.polishContent(input);
+
+      // Evaluate result
+      const scores = await evaluateContent(result.content);
+
+      // Log evaluation
+      this.observabilityAdapter.logEvaluation(input, result.content, scores);
+
+      trace.end();
+      return { content: result.content, scores };
     });
   }
 
@@ -144,27 +154,31 @@ export class GenerationOrchestrator {
    * Runs the full pipeline in one go (simplified)
    */
   async generateCompletePost(topic: string, params: any): Promise<any> {
-    const trace = this.observabilityAdapter.trace('Generate_Complete_Post', { topic, params }, { tags: ['orchestrator', 'complete'] });
+    const trace = this.observabilityAdapter.trace(
+      "Generate_Complete_Post",
+      { topic, params },
+      { tags: ["orchestrator", "complete"] }
+    );
 
     // 1. Hook
     const hooks = await this.generateHooks({ topic, intent: params.intent });
     const selectedHook = hooks[0]?.content || topic;
 
     // 2. Body
-    const bodies = await this.generateBody({ 
-      hook: selectedHook, 
-      topic, 
-      intent: params.intent, 
+    const bodies = await this.generateBody({
+      hook: selectedHook,
+      topic,
+      intent: params.intent,
       length: params.length,
       tone: params.tone,
       emojiLevel: params.emojiDensity, // Mapping param name
-      language: params.language
+      language: params.language,
     });
-    const selectedBody = bodies[0]?.content || '';
+    const selectedBody = bodies[0]?.content || "";
 
     // 3. CTA
     const ctas = await this.generateCTA({ body: selectedBody, intent: params.intent });
-    const selectedCTA = ctas[0]?.content || '';
+    const selectedCTA = ctas[0]?.content || "";
 
     // 4. Polish (Assembly done implicitly or via polish prompt)
     const draft = `${selectedHook}\n\n${selectedBody}\n\n${selectedCTA}`;
@@ -172,7 +186,7 @@ export class GenerationOrchestrator {
       content: draft,
       tone: params.tone,
       emojiDensity: params.emojiDensity,
-      language: params.language
+      language: params.language,
     });
 
     trace.end();
@@ -180,7 +194,7 @@ export class GenerationOrchestrator {
 
     return {
       result: final.content,
-      scores: final.scores
+      scores: final.scores,
     };
   }
 }

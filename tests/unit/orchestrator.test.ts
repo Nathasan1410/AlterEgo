@@ -27,7 +27,7 @@ const mockObservabilityAdapter = {
     end: jest.fn(),
   }),
   logEvaluation: jest.fn(),
-  flush: jest.fn().mockResolvedValue(),
+  flush: jest.fn().mockResolvedValue(undefined),
 } as unknown as IObservabilityAdapter;
 
 const mockCacheAdapter = {

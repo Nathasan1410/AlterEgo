@@ -3,8 +3,8 @@
  * Uses LRU-like strategy with TTL
  */
 
-import { ICacheAdapter } from '../services/adapters/interfaces';
-import { CacheEntry } from '../models/generated';
+import { ICacheAdapter } from "../services/adapters/interfaces";
+import { CacheEntry } from "../models/generated";
 
 export class SimpleCache implements ICacheAdapter {
   private cache: Map<string, CacheEntry<any>>;
@@ -39,7 +39,7 @@ export class SimpleCache implements ICacheAdapter {
     this.cache.set(key, {
       data: value,
       timestamp: Date.now(),
-      ttl: (ttlSeconds || this.defaultTTL / 1000) * 1000
+      ttl: (ttlSeconds || this.defaultTTL / 1000) * 1000,
     });
   }
 

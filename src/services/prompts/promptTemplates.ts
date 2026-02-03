@@ -77,5 +77,5 @@ Language: {{language}}
 - Add 3 relevant hashtags at the bottom.
 
 Return ONLY the final polished text string.
-`
+`,
 };

@@ -1,139 +1,184 @@
 /**
  * Modular API Handler for Generation
- * Replaces the legacy route with orchestrator-based logic
+ * Replaces legacy route with orchestrator-based logic
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getOrchestrator } from '../services/orchestration';
+import { NextRequest, NextResponse } from "next/server";
+import { getOrchestrator } from "../services/orchestration";
+import {
+  createResponse,
+  createValidationErrorResponse,
+  createErrorResponse,
+} from "../utils/apiResponse";
+import { validateRequest, formatZodError } from "../utils/validation";
+import {
+  TopicInputSchema,
+  HookInputSchema,
+  BodyInputSchema,
+  CTAInputSchema,
+  PolishInputSchema,
+  CompleteInputSchema,
+} from "../schemas/generation";
+import { ERROR_CODES } from "../lib/constants";
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+
   try {
     const body = await request.json();
-    const { 
-      type, // 'topics', 'hooks', 'body', 'cta', 'polish', 'complete'
-      input,
-      context, 
-      intent,
-      length,
-      tone,
-      emojiDensity,
-      emojiLevel,
-      language,
-      styleProfile,
-      researchDepth,
-      researchContext
-    } = body;
+    const { type } = body;
+
+    if (!type) {
+      return NextResponse.json(
+        createValidationErrorResponse("type", "Generation type is required"),
+        { status: 400 }
+      );
+    }
 
     const orchestrator = getOrchestrator();
-    const finalEmojiLevel = emojiLevel || emojiDensity || 'moderate';
-
-    let result;
 
     switch (type) {
-      case 'topics':
-        result = await orchestrator.generateTopics({ 
-          idea: input, 
-          researchDepth 
-        });
-        break;
+      case "topics": {
+        const validated = validateRequest(TopicInputSchema, body);
+        if (!validated.success) {
+          return NextResponse.json(
+            createResponse(
+              null,
+              { code: ERROR_CODES.VALIDATION_ERROR, message: validated.error! },
+              0
+            ),
+            { status: 400 }
+          );
+        }
+        const result = await orchestrator.generateTopics(validated.data);
+        return NextResponse.json(
+          createResponse({ result, options: result }, undefined, Date.now() - startTime)
+        );
+      }
 
-      case 'hooks':
-        result = await orchestrator.generateHooks({ 
-          topic: input, 
-          intent 
-        });
-        break;
+      case "hooks": {
+        const validated = validateRequest(HookInputSchema, body);
+        if (!validated.success) {
+          return NextResponse.json(
+            createResponse(
+              null,
+              { code: ERROR_CODES.VALIDATION_ERROR, message: validated.error! },
+              0
+            ),
+            { status: 400 }
+          );
+        }
+        const result = await orchestrator.generateHooks(validated.data);
+        return NextResponse.json(
+          createResponse({ result, options: result }, undefined, Date.now() - startTime)
+        );
+      }
 
-      case 'body':
-        // input = hook, context = topic
-        result = await orchestrator.generateBody({
-          hook: input,
-          topic: context || '',
-          intent,
-          length,
-          tone,
-          emojiLevel: finalEmojiLevel,
-          language,
-          styleProfile,
-          researchContext
-        });
-        break;
+      case "body": {
+        const validated = validateRequest(BodyInputSchema, body);
+        if (!validated.success) {
+          return NextResponse.json(
+            createResponse(
+              null,
+              { code: ERROR_CODES.VALIDATION_ERROR, message: validated.error! },
+              0
+            ),
+            { status: 400 }
+          );
+        }
+        const result = await orchestrator.generateBody(validated.data);
+        return NextResponse.json(
+          createResponse({ result, options: result }, undefined, Date.now() - startTime)
+        );
+      }
 
-      case 'cta':
-        // input = body
-        result = await orchestrator.generateCTA({
-          body: input,
-          intent
-        });
-        break;
+      case "cta": {
+        const validated = validateRequest(CTAInputSchema, body);
+        if (!validated.success) {
+          return NextResponse.json(
+            createResponse(
+              null,
+              { code: ERROR_CODES.VALIDATION_ERROR, message: validated.error! },
+              0
+            ),
+            { status: 400 }
+          );
+        }
+        const result = await orchestrator.generateCTA(validated.data);
+        return NextResponse.json(
+          createResponse({ result, options: result }, undefined, Date.now() - startTime)
+        );
+      }
 
-      case 'polish':
-        const polishRes = await orchestrator.polishContent({
-          content: input,
-          tone: tone || 5,
-          emojiDensity: typeof finalEmojiLevel === 'number' ? finalEmojiLevel : 5,
-          language: language || 'id'
-        });
-        // Match api-client expectation: { polished: string, scores: any[] }
-        result = { 
-          polished: polishRes.content, 
-          scores: polishRes.scores 
+      case "polish": {
+        const validated = validateRequest(PolishInputSchema, body);
+        if (!validated.success) {
+          return NextResponse.json(
+            createResponse(
+              null,
+              { code: ERROR_CODES.VALIDATION_ERROR, message: validated.error! },
+              0
+            ),
+            { status: 400 }
+          );
+        }
+        const polishRes = await orchestrator.polishContent(validated.data);
+        const result = {
+          polished: polishRes.content,
+          scores: polishRes.scores,
         };
-        break;
+        return NextResponse.json(createResponse(result, undefined, Date.now() - startTime));
+      }
 
-      case 'complete':
-        const completeRes = await orchestrator.generateCompletePost(input, {
-          intent, length, tone, emojiDensity: finalEmojiLevel, language
+      case "complete": {
+        const validated = validateRequest(CompleteInputSchema, body);
+        if (!validated.success) {
+          return NextResponse.json(
+            createResponse(
+              null,
+              { code: ERROR_CODES.VALIDATION_ERROR, message: validated.error! },
+              0
+            ),
+            { status: 400 }
+          );
+        }
+        const completeRes = await orchestrator.generateCompletePost(validated.data.topic, {
+          intent: validated.data.intent,
+          length: validated.data.length,
+          tone: validated.data.tone,
+          emojiDensity: validated.data.emojiDensity,
+          language: validated.data.language,
         });
-        // completeRes is { result: string, scores: any[] }
-        // We return it directly as result, or flatten it?
-        // api-client expects: data.result to be the string?
-        // If we return { result: completeRes }, then data.result = { result: "...", scores: ... }
-        // Let's flatten for clarity if needed, or keep structure.
-        // Legacy api-client expects data.result to be string.
-        // Let's return result as string, and attach scores elsewhere?
-        // No, let's update api-client later if needed. For now, mimic legacy behavior.
-        // Legacy: { result: "string" }
-        // New: { result: "string", scores: [] } (top level)
-        
-        // Let's return payload
-        return NextResponse.json({
-          success: true,
+        const result = {
           result: completeRes.result,
-          scores: completeRes.scores
-        });
-        break;
+          scores: completeRes.scores,
+        };
+        return NextResponse.json(createResponse(result, undefined, Date.now() - startTime));
+      }
 
       default:
         return NextResponse.json(
-          { error: `Invalid generation type: ${type}` },
+          createValidationErrorResponse("type", `Invalid generation type: ${type}`),
           { status: 400 }
         );
     }
-
-    return NextResponse.json({ 
-      success: true, 
-      result: result,
-      options: Array.isArray(result) ? result : undefined 
-    });
-
   } catch (error) {
-    console.error('Modular API Error:', error);
+    console.error("Modular API Error:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      },
+      createErrorResponse(
+        error instanceof Error ? error.message : "Unknown error",
+        ERROR_CODES.GENERATION_ERROR
+      ),
       { status: 500 }
     );
   }
 }
 
 export async function GET() {
-  return NextResponse.json({ 
-    status: 'ok', 
-    service: 'CommitToCareer AI API (Modular)',
-    version: '3.0.0',
-    timestamp: new Date().toISOString()
+  return NextResponse.json({
+    status: "ok",
+    service: "CommitToCareer AI API (Modular)",
+    version: "3.0.0",
+    timestamp: new Date().toISOString(),
   });
 }

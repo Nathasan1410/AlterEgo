@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import PostGeneratorWizard from '@/components/PostGeneratorWizard';
-import DarkVeilBackground from '@/components/DarkVeilBackground';
-import Sidebar from '@/components/Sidebar';
+import PostGeneratorWizard from '@/src/components/features/post-generator/PostGeneratorWizard';
+import DarkVeilBackground from '@/src/components/layout/DarkVeilBackground';
+import Sidebar from '@/src/components/layout/Sidebar';
 import { Linkedin } from 'lucide-react';
 
 export default function Home() {

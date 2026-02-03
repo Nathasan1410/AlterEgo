@@ -3,27 +3,30 @@
  * All LLM adapters must implement this interface for interchangeability
  */
 
-import type { 
-  GeneratedOption, 
-  TopicInput, 
-  HookInput, 
-  BodyInput, 
-  CTAInput, 
-  PolishInput, 
-  TraceContext 
-} from '../../models/generated';
+import type {
+  GeneratedOption,
+  TopicInput,
+  HookInput,
+  BodyInput,
+  CTAInput,
+  PolishInput,
+  TraceContext,
+} from "../../models/generated";
 
 export interface IModelAdapter {
   readonly name: string;
   readonly version: string;
-  
+
   // Core generation methods
   generateTopics(input: TopicInput, context?: TraceContext): Promise<GeneratedOption[]>;
   generateHooks(input: HookInput, context?: TraceContext): Promise<GeneratedOption[]>;
   generateBody(input: BodyInput, context?: TraceContext): Promise<GeneratedOption[]>;
   generateCTA(input: CTAInput, context?: TraceContext): Promise<GeneratedOption[]>;
-  polishContent(input: PolishInput, context?: TraceContext): Promise<{ content: string; scores?: any[] }>;
-  
+  polishContent(
+    input: PolishInput,
+    context?: TraceContext
+  ): Promise<{ content: string; scores?: any[] }>;
+
   // Health check
   healthCheck(): Promise<boolean>;
 }
@@ -33,7 +36,7 @@ export interface IModelAdapter {
  */
 export interface IResearchAdapter {
   readonly name: string;
-  
+
   search(query: string, maxResults?: number): Promise<ResearchResult[]>;
   getTrending(industry: string): Promise<ResearchResult[]>;
 }
@@ -50,7 +53,7 @@ export interface ResearchResult {
  */
 export interface IObservabilityAdapter {
   readonly projectName: string;
-  
+
   trace(name: string, input: any, options?: { tags?: string[]; metadata?: any }): ITrace;
   logEvaluation(input: any, output: any, evaluations: any[], traceId?: string): void;
   flush(): Promise<void>;

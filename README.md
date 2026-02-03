@@ -1,65 +1,131 @@
-# AlterEgo: Agentic Personal Branding Coach 🧬
+# CommitToCareer (AlterEgo) - AI LinkedIn Post Generator
 
-> **Hackathon Submission** - Commit To Change Hackathon 2026
-> **Category**: Productivity & Work Habits
-> **Tech Stack**: Next.js, Groq (Llama 3.3 70B), Opik AI Observability
+> Full documentation has been moved to the [`docs/`](./docs/) directory.
 
-## 🤖 The Solution
+## Quick Links
 
-**AlterEgo** is not just a text generator. It is an **Agentic Workflow** that acts as your professional Ghostwriter. It clones your writing style and uses a multi-step agentic process to craft viral content.
+- **[Documentation Index](./docs/README.md)** - All project documentation
+- **[Progress Report](./docs/PROGRESS-REPORT-03-02-26.md)** - Latest progress and milestones
+- **[Task Prioritization](./docs/task-prioritization.md)** - Task list and execution order
+- **[Clean Code Plan](./docs/clean-code-plan.md)** - File structure and refactoring standards
+- **[Issues & Fixes](./docs/issues-fixes.md)** - Identified issues and solutions
 
-### The Agentic Pipeline
-1.  **Researcher Agent**: Scrapes viral structures and analyzes your past posts to build a "Style DNA".
-2.  **Drafting Agent**: Generates 3 Hook variations and 2 Body options based on viral frameworks.
-3.  **Self-Correction Agent (The "Critic")**: Before showing you the result, this agent reads the draft, checks it against your "Tone" settings (0-10 Scale), and rewrites it to ensure maximum impact. **(Visible in Opik Traces)**.
+## Project Overview
 
-## 🏆 Hackathon Integration: Opik & Traceability
+AlterEgo is an AI-powered LinkedIn post generator that helps professionals create viral, engaging content tailored to their personal writing style.
 
-We built AlterEgo with an **"Observability First"** mindset using **Opik**.
+**Tech Stack:**
+- **Frontend:** Next.js 16, React 18, Tailwind CSS
+- **Backend:** Next.js API Routes
+- **AI Models:** Groq (LLaMA 3.3), OpenAI (Whisper)
+- **Observability:** Opik
+- **Validation:** Zod
+- **Language:** TypeScript
 
-### 1. Full Traceability
-Every AI thought process is tracked. You can see exactly how the **Self_Correction_Agent** modifies the text by viewing the traces in the Opik Dashboard.
-
-### 2. Dataset Evaluation (LLM-as-a-Judge)
-We include a robust evaluation script to prove our AI's quality.
-Run it locally to see the agents in action:
+## Quick Start
 
 ```bash
-npm run evaluate
+# Install dependencies
+npm install
+
+# Copy environment variables
+cp .env.example .env
+
+# Set your API keys in .env
+# GROQ_API_KEY=your_key
+# OPIK_API_KEY=your_key
+# TAVILY_API_KEY=your_key
+
+# Run development server
+npm run dev
+
+# Run tests
+npm test
+
+# Build for production
+npm run build
 ```
 
-This script runs a dataset of topics through the agents and scores them based on:
-*   **Virality Score**: Does the hook use strong psychological triggers?
-*   **Style Adherence**: Does the body match the requested length and tone?
+## Project Structure
 
-## 🚀 Quick Start
+```
+HACKATHON-OpikAI/
+├── docs/                    # All documentation
+│   ├── reports/            # Builder and auditor reports
+│   └── ...                # Planning documents
+├── src/                    # All source code
+│   ├── app/                # Next.js app directory
+│   ├── components/         # React components
+│   ├── hooks/              # Custom React hooks
+│   ├── lib/                # Utilities and clients
+│   ├── services/           # Business logic
+│   ├── types/              # TypeScript types
+│   ├── schemas/            # Zod validation schemas
+│   └── utils/              # Utility functions
+├── tests/                  # Test files
+├── public/                 # Static assets
+└── package.json
+```
 
-1.  **Clone & Install**:
-    ```bash
-    git clone https://github.com/Nathasan1410/AlterEgo.git
-    cd AlterEgo
-    npm install
-    ```
+## Current Progress
 
-2.  **Setup Keys (.env)**:
-    ```env
-    GROQ_API_KEY=...
-    OPIK_API_KEY=...
-    ```
+- **Critical Tasks:** 5/5 complete ✅
+- **High Priority Tasks:** 4/8 complete (50%)
+- **Overall Progress:** 56% (9/21 tasks)
 
-3.  **Run Dev**:
-    ```bash
-    npm run dev
-    ```
+See [Progress Report](./docs/PROGRESS-REPORT-03-02-26.md) for details.
 
-4.  **Run Evaluation (For Judges)**:
-    ```bash
-    npm run evaluate
-    ```
+## Key Features
 
-## 🧠 Why Opik?
+- ✅ **Style Analysis:** Analyze user's writing from LinkedIn posts
+- ✅ **Content Generation:** Generate topics, hooks, body, and CTAs
+- ✅ **Research Integration:** Web search for context
+- ✅ **Voice Input:** Audio transcription for hands-free input
+- ✅ **Viral Scoring:** AI-powered content quality assessment
+- ✅ **Multi-language:** Support for Indonesian and English
 
-Without Opik, our "Self-Correction Agent" would just be a black box. With Opik, we can **prove** that the agent is actively fixing grammar, adjusting tone, and ensuring style consistency in real-time.
+## Development Status
+
+**Last Updated:** 2026-02-03
+
+**Completed Milestones:**
+- ✅ Milestone 1: Foundation & Structure
+- ✅ Milestone 2: API Standardization & Validation
+
+**In Progress:**
+- 🔄 Milestone 3: Component Refactoring
+- 📋 Milestone 4: Infrastructure & Polish
+
+**Next Session Focus:**
+1. Complete H4 (error handler integration)
+2. Extract PostGeneratorWizard phases (H5)
+3. Create usePostGeneration hook (H6)
+
+## Documentation
+
+- [Progress Report](./docs/PROGRESS-REPORT-03-02-26.md)
+- [Task Prioritization](./docs/task-prioritization.md)
+- [Clean Code Plan](./docs/clean-code-plan.md)
+- [Issues & Fixes](./docs/issues-fixes.md)
+- [Optimization Plan](./docs/optimization-plan.md)
+- [Future Implementation Plan](./docs/future-implementation-plan.md)
+- [Product Profile](./docs/product-profile.md)
+
+## Audit Reports
+
+Latest audit reports available in [docs/reports/](./docs/reports/):
+
+- [Session 1 Audit](./docs/reports/auditor-report-session-1.md)
+- [Sessions 2-3 Audit](./docs/reports/auditor-report-sessions-2-3.md)
+- [Session 4 Audit](./docs/reports/auditor-report-session-4.md)
+- [Audit Summary](./docs/reports/auditor-summary.md)
+
+## License
+
+MIT
 
 ---
-*Built with ❤️ for the Future of Work.*
+
+**Hackathon Project:** AlterEgo (CommitToCareer)
+**Status:** Active Development
+**Last Updated:** 2026-02-03
