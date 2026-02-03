@@ -48,6 +48,8 @@ export async function POST(request: NextRequest) {
           );
         }
         const result = await orchestrator.generateTopics(validated.data);
+        console.log("[API generate] Topics result type:", typeof result, "isArray:", Array.isArray(result));
+        console.log("[API generate] Topics result:", result);
         return NextResponse.json(
           createResponse({ result, options: result }, undefined, Date.now() - startTime)
         );

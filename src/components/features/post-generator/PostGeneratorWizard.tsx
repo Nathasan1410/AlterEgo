@@ -552,9 +552,10 @@ export default function PostGeneratorWizard() {
 
                       {/* Options Carousel */}
                       {!loading && hand.options && Array.isArray(hand.options) && (
-                        <OptionCarousel
+                      <OptionCarousel
                           options={hand.options}
                           onSelect={(opt) => {
+                            console.log("[PostGeneratorWizard] Selected option:", opt, "type:", typeof opt);
                             if (hand.type === "topics") selectTopic(opt);
                             if (hand.type === "hooks") selectHook(opt);
                             if (hand.type === "body") selectBody(opt);

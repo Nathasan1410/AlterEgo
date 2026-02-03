@@ -23,6 +23,15 @@ export default function OptionCarousel({
   stepType,
   loading = false,
 }: OptionCarouselProps) {
+  console.log("[OptionCarousel] Received options:", options);
+  console.log("[OptionCarousel] Options type:", typeof options);
+  console.log("[OptionCarousel] Is array:", Array.isArray(options));
+  console.log("[OptionCarousel] Options length:", options?.length);
+  if (options && options.length > 0) {
+    console.log("[OptionCarousel] First option type:", typeof options[0]);
+    console.log("[OptionCarousel] First option:", options[0]);
+  }
+
   const [currentPage, setCurrentPage] = useState(0);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -224,10 +233,12 @@ export default function OptionCarousel({
             ) : (
               /* Regular Options */
               currentOptions.map((opt, i) => {
+                console.log(`[OptionCarousel] Rendering option ${i}:`, opt, "type:", typeof opt);
                 const globalIndex = currentPage * itemsPerPage + i;
                 const content = getContent(opt);
                 const score = getScore(opt);
                 const reasoning = getReasoning(opt);
+                console.log(`[OptionCarousel] Option ${i} content:`, content, "score:", score);
 
                 return (
                   <Card
