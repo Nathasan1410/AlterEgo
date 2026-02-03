@@ -64,6 +64,11 @@ export default function PostGeneratorWizard() {
     magicMode: false,
   });
 
+  // Diagnostic: Log when component renders
+  useEffect(() => {
+    console.log("[PostGeneratorWizard] Component rendered successfully", { phase, loading });
+  }, []);
+
   // Viewport-aware pagination
   const [isMobile, setIsMobile] = useState(false);
 
