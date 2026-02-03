@@ -37,16 +37,34 @@ Tone: {{tone}}/10
 Style Context: {{styleProfile}}
 Research Context: {{researchContext}}
 
-CRITICAL: Return a JSON ARRAY of objects. The "content" field MUST be the full post body text (multiple sentences). DO NOT return a number in the content field.
+CRITICAL INSTRUCTIONS:
+1. Return a JSON ARRAY of exactly 2 objects
+2. Each object MUST have three fields: "content", "score", "reasoning"
+3. The "content" field MUST contain the FULL POST BODY TEXT (3-5 sentences minimum, actual post content)
+4. The "score" field MUST be a number between 1-100
+5. The "reasoning" field MUST be a brief explanation (10-20 words) of why this body works
+6. DO NOT put the reasoning text in the content field
+7. DO NOT put a number in the content field
+8. The content must be actual post content, not a description or summary
 
-Format:
+Correct Format:
 [
   { 
-    "content": "Full body text goes here. It should be engaging and relevant...", 
+    "content": "The full post body text goes here. Write actual engaging content that readers would see in a LinkedIn post. Multiple sentences with valuable insights and clear narrative.", 
     "score": 88, 
-    "reasoning": "Engagement factors" 
+    "reasoning": "Strong opening hook maintains reader interest throughout the narrative" 
+  },
+  { 
+    "content": "Another distinct body variation here. Different approach or angle on the same topic. Engaging and valuable content for LinkedIn audience.", 
+    "score": 92, 
+    "reasoning": "Clear value proposition with actionable insights for professionals" 
   }
 ]
+
+INCORRECT Examples:
+- "content": "88" (number in content)
+- "content": "This post effectively weaves together..." (description instead of actual content)
+- "content": "Strong opening hook..." (reasoning text in content field)
 `,
 
   CTA: `

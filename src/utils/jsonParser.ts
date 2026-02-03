@@ -131,14 +131,24 @@ export class JSONParser {
           }
         }
 
-        if (String(content).length < 5 && !isNaN(Number(content))) {
-          content = "Content generation failed (invalid format). Please try again.";
+        // Validate that content is not a number or too short
+        if (!content || String(content).length < 5) {
+          content = "Content generation failed - content too short. Please try again.";
+        } else if (!isNaN(Number(content)) && String(content).length < 10) {
+          // If content is just a number (like a score), it's invalid
+          content = "Content generation failed - invalid format. Please try again.";
+        }
+
+        // Validate that reasoning exists and is not the same as content
+        let reasoning = p.reasoning || "AI generated";
+        if (reasoning === content || String(reasoning).length > 200) {
+          reasoning = "AI generated";
         }
 
         return {
           content,
           score: p.score || 75,
-          reasoning: p.reasoning || "AI generated",
+          reasoning,
           metadata: p.metadata,
         };
       });

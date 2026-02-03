@@ -22,6 +22,7 @@ export interface HookInput {
   topic: string;
   intent?: "viral" | "storytelling" | "educational";
   language?: string;
+  styleGuidance?: string;
 }
 
 export interface BodyInput {
@@ -34,12 +35,14 @@ export interface BodyInput {
   language?: string;
   styleProfile?: string;
   researchContext?: string;
+  styleGuidance?: string;
 }
 
 export interface CTAInput {
   body: string;
   intent?: string;
   language?: string;
+  styleGuidance?: string;
 }
 
 export interface PolishInput {

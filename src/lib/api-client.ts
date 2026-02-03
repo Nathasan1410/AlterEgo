@@ -8,11 +8,16 @@ export type GenerationType = "topics" | "hooks" | "body" | "cta";
 export type { GeneratedOption };
 
 interface GenerateContentParams {
-  input: string;
+  input?: string;
+  topic?: string;
+  hook?: string;
+  body?: string;
   context?: string;
   intent?: string;
   length?: string;
+  tone?: number;
   researchDepth?: number;
+  styleGuidance?: string;
 }
 
 interface GenerateContentResponse {

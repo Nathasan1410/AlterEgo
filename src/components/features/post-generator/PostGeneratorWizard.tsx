@@ -64,11 +64,6 @@ export default function PostGeneratorWizard() {
     magicMode: false,
   });
 
-  // Diagnostic: Log when component renders
-  useEffect(() => {
-    console.log("[PostGeneratorWizard] Component rendered successfully", { phase, loading });
-  }, []);
-
   // Viewport-aware pagination
   const [isMobile, setIsMobile] = useState(false);
 
@@ -150,15 +145,15 @@ export default function PostGeneratorWizard() {
 
     try {
       const data = await generateContent("hooks", {
-        input: topic,
+        topic: topic,
         intent: settings.intent,
       });
-      if (data.result) {
+      if (data.result && data.result.length > 0) {
         setHand({ type: "hooks", options: data.result });
         setOptionsCache((prev) => ({ ...prev, hooks: data.result }));
       }
     } catch (e) {
-      console.error(e);
+      console.error("Error generating hooks:", e);
     }
     setLoading(false);
   };
@@ -176,8 +171,8 @@ export default function PostGeneratorWizard() {
 
     try {
       const data = await generateContent("body", {
-        input: hook,
-        context: deck.topic,
+        hook: hook,
+        topic: deck.topic,
         intent: settings.intent,
         length: settings.length,
       });
@@ -204,7 +199,7 @@ export default function PostGeneratorWizard() {
 
     try {
       const data = await generateContent("cta", {
-        input: body,
+        body: body,
         intent: settings.intent,
       });
       if (data.result) {
@@ -292,52 +287,55 @@ export default function PostGeneratorWizard() {
     setLoading(false);
   };
 
-  const regenerateHooks = async () => {
+  const regenerateHooks = async (styleGuidance?: string) => {
     setLoading(true);
     try {
       const data = await generateContent("hooks", {
-        input: deck.topic,
+        topic: deck.topic,
         intent: settings.intent,
+        styleGuidance: styleGuidance || "",
       });
-      if (data.result) {
+      if (data.result && data.result.length > 0) {
         setHand({ type: "hooks", options: data.result });
       }
     } catch (e) {
-      console.error(e);
+      console.error("Error regenerating hooks:", e);
     }
     setLoading(false);
   };
 
-  const regenerateBody = async () => {
+  const regenerateBody = async (styleGuidance?: string) => {
     setLoading(true);
     try {
       const data = await generateContent("body", {
-        input: deck.hook,
-        context: deck.topic,
+        hook: deck.hook,
+        topic: deck.topic,
         intent: settings.intent,
         length: settings.length,
+        styleGuidance: styleGuidance || "",
       });
       if (data.result) {
         setHand({ type: "body", options: data.result });
       }
     } catch (e) {
-      console.error(e);
+      console.error("Error regenerating body:", e);
     }
     setLoading(false);
   };
 
-  const regenerateCTA = async () => {
+  const regenerateCTA = async (styleGuidance?: string) => {
     setLoading(true);
     try {
       const data = await generateContent("cta", {
-        input: deck.body,
+        body: deck.body,
         intent: settings.intent,
+        styleGuidance: styleGuidance || "",
       });
       if (data.result) {
         setHand({ type: "cta", options: data.result });
       }
     } catch (e) {
-      console.error(e);
+      console.error("Error regenerating CTA:", e);
     }
     setLoading(false);
   };
@@ -555,7 +553,6 @@ export default function PostGeneratorWizard() {
                       <OptionCarousel
                           options={hand.options}
                           onSelect={(opt) => {
-                            console.log("[PostGeneratorWizard] Selected option:", opt, "type:", typeof opt);
                             if (hand.type === "topics") selectTopic(opt);
                             if (hand.type === "hooks") selectHook(opt);
                             if (hand.type === "body") selectBody(opt);
@@ -595,6 +592,15 @@ export default function PostGeneratorWizard() {
             >
               <ChatInput
                 onGenerate={handleStart}
+                onRegenerate={(text, newSettings) => {
+                  // Update settings from chat input
+                  setSettings(prev => ({ ...prev, ...newSettings }));
+                  if (hand.type === "topics") regenerateTopics();
+                  if (hand.type === "hooks") regenerateHooks(text);
+                  if (hand.type === "body") regenerateBody(text);
+                  if (hand.type === "cta") regenerateCTA(text);
+                }}
+                currentStep={hand.type}
                 initialSettings={settings}
                 onSettingsChange={setSettings}
               />

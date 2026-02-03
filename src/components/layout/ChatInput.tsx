@@ -9,6 +9,8 @@ import { Globe, Sparkles } from "lucide-react";
 
 interface ChatInputProps {
   onGenerate: (topic: string, settings: any) => void;
+  onRegenerate?: (text: string, settings: any) => void;
+  currentStep?: "topics" | "hooks" | "body" | "cta" | null;
   initialSettings: any;
   onSettingsChange: (settings: any) => void;
   onOpenStyleOnboarding?: () => void;
@@ -17,6 +19,8 @@ interface ChatInputProps {
 
 export default function ChatInput({
   onGenerate,
+  onRegenerate,
+  currentStep,
   initialSettings,
   onSettingsChange,
   onOpenStyleOnboarding,
@@ -208,12 +212,12 @@ export default function ChatInput({
 
             {/* PRIMARY ACTION - Strong Orange */}
             <Button
-              onClick={handleGenerate}
-              disabled={!topic.trim()}
+              onClick={currentStep ? () => onRegenerate?.(topic, { intent, length, magicMode, researchMode }) : handleGenerate}
+              disabled={currentStep ? false : !topic.trim()}
               variant="primary"
               className="px-6 py-2 shadow-lg shadow-orange-500/20"
             >
-              Generate
+              {currentStep ? "Regenerate" : "Generate"}
             </Button>
           </div>
 

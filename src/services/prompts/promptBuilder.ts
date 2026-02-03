@@ -15,27 +15,48 @@ export class PromptBuilder {
   }
 
   static buildHooksPrompt(input: HookInput): string {
-    return PROMPT_TEMPLATES.HOOKS.replace("{{topic}}", input.topic).replace(
+    let prompt = PROMPT_TEMPLATES.HOOKS.replace("{{topic}}", input.topic).replace(
       "{{intent}}",
       input.intent || "viral"
     );
+    
+    // Add style guidance if provided
+    if (input.styleGuidance && input.styleGuidance.trim()) {
+      prompt += `\n\nSTYLE GUIDANCE: Use this writing style and approach: "${input.styleGuidance}"`;
+    }
+    
+    return prompt;
   }
 
   static buildBodyPrompt(input: BodyInput): string {
-    return PROMPT_TEMPLATES.BODY.replace("{{hook}}", input.hook)
+    let prompt = PROMPT_TEMPLATES.BODY.replace("{{hook}}", input.hook)
       .replace("{{topic}}", input.topic)
       .replace("{{length}}", input.length || "medium")
       .replace("{{tone}}", (input.tone || 5).toString())
       .replace("{{styleProfile}}", input.styleProfile || "Standard Professional")
       .replace("{{researchContext}}", input.researchContext || "None");
+    
+    // Add style guidance if provided
+    if (input.styleGuidance && input.styleGuidance.trim()) {
+      prompt += `\n\nADDITIONAL STYLE GUIDANCE: ${input.styleGuidance}`;
+    }
+    
+    return prompt;
   }
 
   static buildCTAPrompt(input: CTAInput): string {
     const excerpt = input.body.substring(0, 150).replace(/\n/g, " ");
-    return PROMPT_TEMPLATES.CTA.replace("{{bodyExcerpt}}", excerpt).replace(
+    let prompt = PROMPT_TEMPLATES.CTA.replace("{{bodyExcerpt}}", excerpt).replace(
       "{{intent}}",
       input.intent || "viral"
     );
+    
+    // Add style guidance if provided
+    if (input.styleGuidance && input.styleGuidance.trim()) {
+      prompt += `\n\nSTYLE GUIDANCE: ${input.styleGuidance}`;
+    }
+    
+    return prompt;
   }
 
   static buildPolishPrompt(input: PolishInput): string {
