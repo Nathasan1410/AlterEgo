@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, RefreshCw, Star } from "lucide-react";
-import Card from "../../ui/Card";
+import Card from "@/src/components/ui/Card";
 import type { GeneratedOption } from "@/src/lib/api-client";
 
 interface OptionCarouselProps {

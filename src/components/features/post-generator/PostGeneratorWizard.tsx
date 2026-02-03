@@ -10,14 +10,14 @@ import {
   INTENT_TYPES,
   LENGTH_OPTIONS,
 } from "@/src/lib/constants";
-import SettingsPanel from "../../layout/SettingsPanel";
-import ChatInput from "../../layout/ChatInput";
-import OpikScoreCard from "../analytics/OpikScoreCard";
-import Canvas from "../canvas/Canvas";
-import MobileCanvas from "../canvas/MobileCanvas";
+import SettingsPanel from "@/src/components/layout/SettingsPanel";
+import ChatInput from "@/src/components/layout/ChatInput";
+import OpikScoreCard from "@/src/components/analytics/OpikScoreCard";
+import Canvas from "@/src/components/canvas/Canvas";
+import MobileCanvas from "@/src/components/canvas/MobileCanvas";
 import OptionCarousel from "./OptionCarousel";
 import { useViewportCardCount } from "@/src/hooks/useViewportCardCount";
-import { Button, Card, Skeleton } from "../../ui";
+import { Button, Card, Skeleton } from "@/src/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 
