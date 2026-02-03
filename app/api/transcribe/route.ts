@@ -1,14 +1,10 @@
 // Voice Transcription API - Groq Whisper
 import { NextRequest, NextResponse } from "next/server";
 import Groq from "groq-sdk";
-import {
-  createResponse,
-  createValidationErrorResponse,
-  createErrorResponse,
-} from "@/src/utils/apiResponse";
+import { createResponse } from "@/src/utils/apiResponse";
 import { validateFormData } from "@/src/utils/validation";
 import { TranscriptionInputSchema } from "@/src/schemas/generation";
-import { ERROR_CODES } from "@/src/lib/constants";
+import { handleError } from "@/src/utils/errorHandler";
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -23,7 +19,7 @@ export async function POST(request: NextRequest) {
     const validated = validateFormData(TranscriptionInputSchema, formData);
     if (!validated.success) {
       return NextResponse.json(
-        createResponse(null, { code: ERROR_CODES.VALIDATION_ERROR, message: validated.error! }, 0),
+        createResponse(null, { code: "VALIDATION_ERROR", message: validated.error! }, 0),
         { status: 400 }
       );
     }
@@ -47,8 +43,6 @@ export async function POST(request: NextRequest) {
       temperature: 0.0,
     });
 
-    console.log("[Transcription] Success:", transcription.text?.slice(0, 100));
-
     const duration = (Date.now() - startTime) / 1000;
 
     return NextResponse.json(
@@ -59,13 +53,6 @@ export async function POST(request: NextRequest) {
       )
     );
   } catch (error) {
-    console.error("Transcription error:", error);
-    return NextResponse.json(
-      createErrorResponse(
-        error instanceof Error ? error.message : "Failed to transcribe audio",
-        ERROR_CODES.API_ERROR
-      ),
-      { status: 500 }
-    );
+    return handleError(error);
   }
 }

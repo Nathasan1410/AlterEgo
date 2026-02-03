@@ -5,12 +5,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getOrchestrator } from "../services/orchestration";
-import {
-  createResponse,
-  createValidationErrorResponse,
-  createErrorResponse,
-} from "../utils/apiResponse";
-import { validateRequest, formatZodError } from "../utils/validation";
+import { createResponse, createValidationErrorResponse } from "../utils/apiResponse";
+import { validateRequest } from "../utils/validation";
 import {
   TopicInputSchema,
   HookInputSchema,
@@ -20,6 +16,7 @@ import {
   CompleteInputSchema,
 } from "../schemas/generation";
 import { ERROR_CODES } from "../lib/constants";
+import { handleError } from "../utils/errorHandler";
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
@@ -163,14 +160,7 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
-    console.error("Modular API Error:", error);
-    return NextResponse.json(
-      createErrorResponse(
-        error instanceof Error ? error.message : "Unknown error",
-        ERROR_CODES.GENERATION_ERROR
-      ),
-      { status: 500 }
-    );
+    return handleError(error);
   }
 }
 
