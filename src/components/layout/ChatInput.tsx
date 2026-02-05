@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button, Card } from "../ui";
 import SettingsPanel from "./SettingsPanel";
@@ -36,10 +36,26 @@ export default function ChatInput({
   const [length, setLength] = useState(initialSettings.length || "medium");
   const [magicMode, setMagicMode] = useState(initialSettings.magicMode || false);
 
+  // Sync local state with initialSettings when in building phase
+  useEffect(() => {
+    if (currentStep) {
+      setIntent(initialSettings.intent || "viral");
+      setLength(initialSettings.length || "medium");
+      setMagicMode(initialSettings.magicMode || false);
+    }
+  }, [currentStep, initialSettings.intent, initialSettings.length, initialSettings.magicMode]);
+
   const handleGenerate = () => {
     if (!topic.trim()) return;
-    onSettingsChange({ intent, length, magicMode, researchMode });
-    onGenerate(topic, { intent, length, magicMode, researchMode });
+    const settingsToSave = { 
+      ...initialSettings, 
+      intent, 
+      length, 
+      magicMode, 
+      researchMode 
+    };
+    onSettingsChange(settingsToSave);
+    onGenerate(topic, settingsToSave);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -282,11 +298,11 @@ export default function ChatInput({
                 <SettingsPanel
                   language={initialSettings.language || "id"}
                   setLanguage={(l) => onSettingsChange({ ...initialSettings, language: l })}
-                  emojiLevel={initialSettings.emojiLevel}
+                  emojiLevel={initialSettings.emojiLevel ?? 5}
                   setEmojiLevel={(v) => onSettingsChange({ ...initialSettings, emojiLevel: v })}
-                  tone={initialSettings.tone}
+                  tone={initialSettings.tone ?? 5}
                   setTone={(v) => onSettingsChange({ ...initialSettings, tone: v })}
-                  researchDepth={initialSettings.researchDepth}
+                  researchDepth={initialSettings.researchDepth ?? 3}
                   setResearchDepth={(v) =>
                     onSettingsChange({ ...initialSettings, researchDepth: v })
                   }
