@@ -3,6 +3,8 @@
 ## Issue Summary
 The hook selection was not being saved to the user's picked content. After selecting a hook from the carousel, the flow would skip to the body step without properly saving the selected hook to the deck state.
 
+Additionally, the Studio Settings panel was losing values when transitioning between phases, causing "undefined" values and React controlled/uncontrolled input warnings.
+
 ## Root Causes Identified
 
 ### 1. Stale Closure Bugs in usePostGeneration.ts
@@ -29,6 +31,18 @@ setDeck((p) => ({ ...p, [step === "topics" ? "topic" : step]: option }));
 ```
 
 The ternary only handled `"topics"` → `"topic"` mapping, but not `"hooks"` → `"hook"`.
+
+### 3. Studio Settings Not Persisting
+The Studio Settings panel was losing values because:
+
+**Issue A: Settings not included in generation call**
+In `ChatInput.tsx`, `handleGenerate` only passed `{ intent, length, magicMode, researchMode }`, but `initialSettings` contained `language`, `emojiLevel`, `tone`, and `researchDepth` which got lost.
+
+**Issue B: Settings panel inputs becoming undefined**
+The SettingsPanel component received settings values without fallbacks. When the component re-rendered during the building phase, these values could become undefined, causing React's controlled/uncontrolled input warning.
+
+**Issue C: ChatInput local state not syncing**
+The local state in `ChatInput` (`intent`, `length`, `magicMode`) was initialized from `initialSettings` only on mount, but never updated when `initialSettings` changed during the building phase.
 
 ## Changes Made
 
@@ -101,13 +115,70 @@ setDeck((p) => ({
 }));
 ```
 
-#### 6. Fixed Other Callbacks Using Stale State
+#### 6. Fixed handleStart to Use New Settings
+Changed from using stale `settings.researchDepth` to using the new settings passed in:
+```typescript
+const data = await generateContent("topics", {
+  input: topicInput,
+  researchDepth: newSettings.researchDepth ?? settings.researchDepth,
+});
+```
+
+#### 7. Fixed Other Callbacks Using Stale State
 Updated the following callbacks to use refs instead of closure-captured state:
 - `handleRegenerate` - now uses `deckRef.current` and `handRef.current`
 - `handleRegenerateWithStyle` - now uses `deckRef.current` and `handRef.current`
 - `handleConfirmPolish` - now uses `deckRef.current`
 - `handleRePolish` - now uses `deckRef.current`
 - `handleCopy` - now uses `deckRef.current`
+
+### File: `src/components/layout/ChatInput.tsx`
+
+#### 1. Fixed handleGenerate to Preserve All Settings
+Changed from passing only some settings to spreading all initialSettings:
+```typescript
+const handleGenerate = () => {
+  if (!topic.trim()) return;
+  const settingsToSave = { 
+    ...initialSettings,  // Preserve all existing settings
+    intent, 
+    length, 
+    magicMode, 
+    researchMode 
+  };
+  onSettingsChange(settingsToSave);
+  onGenerate(topic, settingsToSave);
+};
+```
+
+#### 2. Added Sync Effect for Building Phase
+Added useEffect to sync local state with initialSettings when in building phase:
+```typescript
+useEffect(() => {
+  if (currentStep) {
+    setIntent(initialSettings.intent || "viral");
+    setLength(initialSettings.length || "medium");
+    setMagicMode(initialSettings.magicMode || false);
+  }
+}, [currentStep, initialSettings.intent, initialSettings.length, initialSettings.magicMode]);
+```
+
+#### 3. Fixed SettingsPanel Fallback Values
+Added nullish coalescing operators to ensure inputs always have defined values:
+```typescript
+<SettingsPanel
+  language={initialSettings.language || "id"}
+  setLanguage={(l) => onSettingsChange({ ...initialSettings, language: l })}
+  emojiLevel={initialSettings.emojiLevel ?? 5}
+  setEmojiLevel={(v) => onSettingsChange({ ...initialSettings, emojiLevel: v })}
+  tone={initialSettings.tone ?? 5}
+  setTone={(v) => onSettingsChange({ ...initialSettings, tone: v })}
+  researchDepth={initialSettings.researchDepth ?? 3}
+  setResearchDepth={(v) =>
+    onSettingsChange({ ...initialSettings, researchDepth: v })
+  }
+/>
+```
 
 ## Result
 The flow now correctly progresses through all steps:
@@ -117,7 +188,7 @@ The flow now correctly progresses through all steps:
 4. **CTA** - User selects call-to-action
 5. **Confirm** - Review and polish
 
-All selections are now properly persisted in the deck state and visible in the Canvas component.
+All settings configured in the Studio Settings panel (language, emojiLevel, tone, researchDepth) are now properly preserved throughout the entire flow.
 
 ## Testing Recommendations
 1. Test the complete flow: topic → hook → body → cta → confirm
@@ -125,9 +196,13 @@ All selections are now properly persisted in the deck state and visible in the C
 3. Test the back button to ensure hook is properly restored
 4. Test regeneration at each step to ensure state consistency
 5. Verify final post includes the selected hook
+6. Test Studio Settings: Change language, emoji level, tone, and research depth before starting, verify they persist through all phases
+7. Test that settings can be changed during the building phase via the Studio Settings panel
 
 ## Related Files
 - `src/hooks/usePostGeneration.ts` - Main hook with state management
+- `src/components/layout/ChatInput.tsx` - Input component with settings
 - `src/components/features/post-generator/OptionCarousel.tsx` - UI for selecting options
 - `src/components/canvas/Canvas.tsx` - Displays selected content
 - `src/components/features/post-generator/BuildingPhase.tsx` - Container for building phase
+- `src/components/layout/SettingsPanel.tsx` - Studio settings panel

@@ -111,7 +111,7 @@ export function usePostGeneration(): UsePostGenerationReturn {
       try {
         const data = await generateContent("topics", {
           input: topicInput,
-          researchDepth: settings.researchDepth,
+          researchDepth: newSettings.researchDepth ?? settings.researchDepth,
         });
         if (data.result) {
           setHand({ type: "topics", options: data.result });
