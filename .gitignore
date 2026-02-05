@@ -32,3 +32,10 @@ Thumbs.db
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Private/Internal Documentation
+reports/
+*.log
+debugging-*
+REAL_ROOT_CAUSE_*.md
+VERCEL_DEPLOYMENT_FIX.md
