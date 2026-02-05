@@ -1,2 +1,0 @@
-# ✅ technology-stack.md
-

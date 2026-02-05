@@ -1,2 +1,0 @@
-# Testing - Shows quality focus
-

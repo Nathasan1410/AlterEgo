@@ -1,2 +1,0 @@
-# Prerequisites and setup
-

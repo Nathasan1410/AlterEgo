@@ -1,2 +1,0 @@
-# OPIK AI integration overview
-

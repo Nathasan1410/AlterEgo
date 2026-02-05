@@ -1,2 +1,0 @@
-# ✅ hackathon-overview.md
-

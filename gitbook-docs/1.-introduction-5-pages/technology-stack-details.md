@@ -1,2 +1,0 @@
-# Technology stack details
-
