@@ -28,6 +28,7 @@ export default function PostGeneratorWizard() {
     hooksPerPage,
     bodiesPerPage,
     ctasPerPage,
+    error,
     handleStart,
     handleOptionSelect,
     handleRegenerate,
@@ -38,6 +39,7 @@ export default function PostGeneratorWizard() {
     handleCopy,
     handleEdit,
     reset,
+    clearError,
     setSettings,
   } = usePostGeneration();
 
@@ -53,43 +55,94 @@ export default function PostGeneratorWizard() {
         )}
 
         {phase === "building" && (
-          <BuildingPhase
-            deck={deck}
-            hand={hand}
-            navigationHistory={navigationHistory}
-            loading={loading}
-            topicsPerPage={topicsPerPage}
-            hooksPerPage={hooksPerPage}
-            bodiesPerPage={bodiesPerPage}
-            ctasPerPage={ctasPerPage}
-            settings={settings}
-            onSelect={handleOptionSelect}
-            onRegenerate={handleRegenerate}
-            onRegenerateWithStyle={handleRegenerateWithStyle}
-            onBack={handleBack}
-            onGenerate={handleStart}
-            onSettingsChange={setSettings}
-          />
+          <>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200"
+              >
+                <p className="text-sm font-medium">{error}</p>
+                <button
+                  onClick={clearError}
+                  className="mt-2 text-sm text-red-600 underline hover:text-red-800 dark:text-red-300 dark:hover:text-red-100"
+                >
+                  Dismiss
+                </button>
+              </motion.div>
+            )}
+            <BuildingPhase
+              deck={deck}
+              hand={hand}
+              navigationHistory={navigationHistory}
+              loading={loading}
+              topicsPerPage={topicsPerPage}
+              hooksPerPage={hooksPerPage}
+              bodiesPerPage={bodiesPerPage}
+              ctasPerPage={ctasPerPage}
+              settings={settings}
+              onSelect={handleOptionSelect}
+              onRegenerate={handleRegenerate}
+              onRegenerateWithStyle={handleRegenerateWithStyle}
+              onBack={handleBack}
+              onGenerate={handleStart}
+              onSettingsChange={setSettings}
+            />
+          </>
         )}
 
         {phase === "confirm" && (
-          <ConfirmationPhase
-            deck={deck}
-            onConfirm={handleConfirmPolish}
-            onEdit={handleEdit}
-            loading={loading}
-          />
+          <>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200"
+              >
+                <p className="text-sm font-medium">{error}</p>
+                <button
+                  onClick={clearError}
+                  className="mt-2 text-sm text-red-600 underline hover:text-red-800 dark:text-red-300 dark:hover:text-red-100"
+                >
+                  Dismiss
+                </button>
+              </motion.div>
+            )}
+            <ConfirmationPhase
+              deck={deck}
+              onConfirm={handleConfirmPolish}
+              onEdit={handleEdit}
+              loading={loading}
+            />
+          </>
         )}
 
         {phase === "result" && (
-          <ResultPhase
-            deck={deck}
-            scores={opikScores}
-            onCopy={handleCopy}
-            onRePolish={handleRePolish}
-            onReset={reset}
-            loading={loading}
-          />
+          <>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200"
+              >
+                <p className="text-sm font-medium">{error}</p>
+                <button
+                  onClick={clearError}
+                  className="mt-2 text-sm text-red-600 underline hover:text-red-800 dark:text-red-300 dark:hover:text-red-100"
+                >
+                  Dismiss
+                </button>
+              </motion.div>
+            )}
+            <ResultPhase
+              deck={deck}
+              scores={opikScores}
+              onCopy={handleCopy}
+              onRePolish={handleRePolish}
+              onReset={reset}
+              loading={loading}
+            />
+          </>
         )}
       </div>
 

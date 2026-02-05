@@ -13,6 +13,7 @@ import {
   MoreVertical,
   Diamond,
 } from "lucide-react";
+import { HelpModal } from "@/src/components/help";
 
 interface SidebarProps {
   isCollapsed?: boolean;
@@ -20,7 +21,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
-  // const [isCollapsed, setIsCollapsed] = useState(false); // Controlled by parent now
+  const [helpOpen, setHelpOpen] = useState(false);
 
   // Mock history data
   const history = [
@@ -88,6 +89,7 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
       {/* Bottom Section */}
       <div className="mt-auto space-y-1 p-3">
         <button
+          onClick={() => setHelpOpen(true)}
           className={`flex w-full items-center gap-3 rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-100 ${isCollapsed ? "justify-center" : ""}`}
         >
           <HelpCircle className="h-5 w-5" />
@@ -133,6 +135,8 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
           </div>
         )}
       </div>
+
+      <HelpModal isOpen={helpOpen} onClose={() => setHelpOpen(false)} />
     </motion.div>
   );
 }

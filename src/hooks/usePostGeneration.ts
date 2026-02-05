@@ -24,6 +24,7 @@ export interface UsePostGenerationReturn {
   hooksPerPage: number;
   bodiesPerPage: number;
   ctasPerPage: number;
+  error: string | null;
   handleStart: (topic: string, s: Partial<Settings>) => void;
   handleOptionSelect: (opt: string) => void;
   handleRegenerate: () => void;
@@ -34,12 +35,14 @@ export interface UsePostGenerationReturn {
   handleCopy: () => void;
   handleEdit: () => void;
   reset: () => void;
+  clearError: () => void;
   setSettings: React.Dispatch<React.SetStateAction<Settings>>;
 }
 
 export function usePostGeneration(): UsePostGenerationReturn {
   const [phase, setPhase] = useState<Phase>("input");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [deck, setDeck] = useState<DeckType>({ topic: "", hook: "", body: "", cta: "", final: "" });
   const [hand, setHand] = useState<HandType>({ type: null, options: null });
   const [settings, setSettings] = useState<Settings>({
@@ -91,16 +94,24 @@ export function usePostGeneration(): UsePostGenerationReturn {
       setSettings((p) => ({ ...p, ...newSettings }));
       setPhase("building");
       setLoading(true);
+      setError(null);
+      setHand({ type: "topics", options: null });
       try {
         const data = await generateContent("topics", {
           input: topicInput,
           researchDepth: settings.researchDepth,
         });
-        if (data.result) setHand({ type: "topics", options: data.result });
+        if (data.result) {
+          setHand({ type: "topics", options: data.result });
+        } else {
+          setError("Failed to generate topics. Please try again.");
+        }
       } catch (e) {
         logger.error("Error generating topics", e instanceof Error ? e : undefined, { topicInput });
+        setError("Failed to generate topics. Please try again.");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     },
     [settings.researchDepth]
   );
@@ -114,21 +125,28 @@ export function usePostGeneration(): UsePostGenerationReturn {
       setDeck((p) => ({ ...p, [step === "topics" ? "topic" : step]: option }));
       if (nextStep) {
         setLoading(true);
+        setError(null);
+        setHand({ type: nextStep, options: null });
         try {
           const data = await generateContent(nextStep, params);
           if (data.result) {
             setHand({ type: nextStep, options: data.result });
             setOptionsCache((p) => ({ ...p, [nextStep]: data.result }));
+          } else {
+            setError(`Failed to generate ${nextStep}. Please try again.`);
           }
         } catch (e) {
           logger.error(`Error generating ${nextStep}`, e instanceof Error ? e : undefined, {
             params,
           });
+          setError(`Failed to generate ${nextStep}. Please try again.`);
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       } else {
         setHand({ type: null, options: null });
         setPhase("confirm");
+        setError(null);
       }
     },
     [hand.options]
@@ -165,13 +183,21 @@ export function usePostGeneration(): UsePostGenerationReturn {
 
   const regenerateStep = useCallback(async (step: Step, params: any) => {
     setLoading(true);
+    setError(null);
+    setHand({ type: step, options: null });
     try {
       const data = await generateContent(step, params);
-      if (data.result) setHand({ type: step, options: data.result });
+      if (data.result) {
+        setHand({ type: step, options: data.result });
+      } else {
+        setError(`Failed to regenerate ${step}. Please try again.`);
+      }
     } catch (e) {
       logger.error(`Error regenerating ${step}`, e instanceof Error ? e : undefined, { params });
+      setError(`Failed to regenerate ${step}. Please try again.`);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const handleRegenerate = useCallback(() => {
@@ -212,6 +238,7 @@ export function usePostGeneration(): UsePostGenerationReturn {
   const handleConfirmPolish = useCallback(async () => {
     setPhase("result");
     setLoading(true);
+    setError(null);
     try {
       const d = `${deck.hook}\n\n${deck.body}\n\n${deck.cta}`;
       const data = await polishPost({
@@ -223,15 +250,20 @@ export function usePostGeneration(): UsePostGenerationReturn {
       if (data.result) {
         setDeck((p) => ({ ...p, final: data.result }));
         if (data.scores) setOpikScores(data.scores);
+      } else {
+        setError("Failed to polish post. Please try again.");
       }
     } catch (e) {
       logger.error("Error polishing post", e instanceof Error ? e : undefined);
+      setError("Failed to polish post. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [deck, settings]);
 
   const handleRePolish = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const d = `${deck.hook}\n\n${deck.body}\n\n${deck.cta}`;
       const data = await polishPost({
@@ -243,11 +275,15 @@ export function usePostGeneration(): UsePostGenerationReturn {
       if (data.result) {
         setDeck((p) => ({ ...p, final: data.result }));
         if (data.scores) setOpikScores(data.scores);
+      } else {
+        setError("Failed to re-polish post. Please try again.");
       }
     } catch (e) {
       logger.error("Error re-polishing post", e instanceof Error ? e : undefined);
+      setError("Failed to re-polish post. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [deck, settings]);
 
   const handleBack = useCallback(() => {
@@ -262,6 +298,7 @@ export function usePostGeneration(): UsePostGenerationReturn {
     };
     setDeck((p) => ({ ...p, ...du[ps] }));
     setHand({ type: ps, options: optionsCache[ps] || [] });
+    setError(null);
     if (ps === "cta") setPhase("building");
   }, [navigationHistory, optionsCache]);
 
@@ -272,6 +309,7 @@ export function usePostGeneration(): UsePostGenerationReturn {
   const handleEdit = useCallback(() => {
     setPhase("building");
     setHand({ type: "cta", options: optionsCache.cta || [] });
+    setError(null);
   }, [optionsCache.cta]);
   const reset = useCallback(() => {
     setPhase("input");
@@ -280,7 +318,11 @@ export function usePostGeneration(): UsePostGenerationReturn {
     setLoading(false);
     setNavigationHistory([]);
     setOptionsCache({} as Record<Step, (string | GeneratedOption)[] | undefined>);
+    setOpikScores([]);
+    setError(null);
   }, []);
+
+  const clearError = useCallback(() => setError(null), []);
 
   return {
     phase,
@@ -296,6 +338,7 @@ export function usePostGeneration(): UsePostGenerationReturn {
     hooksPerPage,
     bodiesPerPage,
     ctasPerPage,
+    error,
     handleStart,
     handleOptionSelect,
     handleRegenerate,
@@ -306,6 +349,7 @@ export function usePostGeneration(): UsePostGenerationReturn {
     handleCopy,
     handleEdit,
     reset,
+    clearError,
     setSettings,
   };
 }
