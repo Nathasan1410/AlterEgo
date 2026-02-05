@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { generateContent, polishPost } from "@/src/lib/api-client";
 import { VIEWPORT } from "@/src/lib/constants";
 import { useViewportCardCount } from "./useViewportCardCount";
@@ -45,6 +45,18 @@ export function usePostGeneration(): UsePostGenerationReturn {
   const [error, setError] = useState<string | null>(null);
   const [deck, setDeck] = useState<DeckType>({ topic: "", hook: "", body: "", cta: "", final: "" });
   const [hand, setHand] = useState<HandType>({ type: null, options: null });
+  
+  const handRef = useRef(hand);
+  const deckRef = useRef(deck);
+  
+  useEffect(() => {
+    handRef.current = hand;
+  }, [hand]);
+  
+  useEffect(() => {
+    deckRef.current = deck;
+  }, [deck]);
+  
   const [settings, setSettings] = useState<Settings>({
     language: "id",
     emojiLevel: 5,
@@ -118,11 +130,17 @@ export function usePostGeneration(): UsePostGenerationReturn {
 
   const selectStep = useCallback(
     async (step: Step, option: string, nextStep: Step | null, params: any) => {
-      if (hand.options && Array.isArray(hand.options)) {
-        setOptionsCache((p) => ({ ...p, [step]: hand.options! }));
-        setNavigationHistory((p) => [...p, step]);
+      // Cache the current options before transitioning to next step
+      // We read from ref to get the most current state without creating dependency
+      const currentOptions = handRef.current.options;
+      if (currentOptions && Array.isArray(currentOptions)) {
+        setOptionsCache((p) => ({ ...p, [step]: currentOptions }));
       }
-      setDeck((p) => ({ ...p, [step === "topics" ? "topic" : step]: option }));
+      setNavigationHistory((p) => [...p, step]);
+      setDeck((p) => ({ 
+        ...p, 
+        [step === "topics" ? "topic" : step === "hooks" ? "hook" : step]: option 
+      }));
       if (nextStep) {
         setLoading(true);
         setError(null);
@@ -149,7 +167,9 @@ export function usePostGeneration(): UsePostGenerationReturn {
         setError(null);
       }
     },
-    [hand.options]
+    // Intentionally empty - we use ref to read hand state
+    // This prevents recreation of selectStep and its dependents
+    []
   );
 
   const selectTopic = useCallback(
@@ -160,11 +180,11 @@ export function usePostGeneration(): UsePostGenerationReturn {
     (h: string) =>
       selectStep("hooks", h, "body", {
         hook: h,
-        topic: deck.topic,
+        topic: deckRef.current.topic,
         intent: settings.intent,
         length: settings.length,
       }),
-    [selectStep, deck.topic, settings.intent, settings.length]
+    [selectStep, settings.intent, settings.length]
   );
   const selectBody = useCallback(
     (b: string) => selectStep("body", b, "cta", { body: b, intent: settings.intent }),
@@ -174,11 +194,19 @@ export function usePostGeneration(): UsePostGenerationReturn {
 
   const handleOptionSelect = useCallback(
     (opt: string) => {
-      const actions = { topics: selectTopic, hooks: selectHook, body: selectBody, cta: selectCTA };
-      const a = actions[hand.type as Step];
-      if (a) a(opt);
+      // Read hand.type from ref to always get current value
+      const currentType = handRef.current.type;
+      if (currentType === "topics") {
+        selectTopic(opt);
+      } else if (currentType === "hooks") {
+        selectHook(opt);
+      } else if (currentType === "body") {
+        selectBody(opt);
+      } else if (currentType === "cta") {
+        selectCTA(opt);
+      }
     },
-    [hand.type, selectTopic, selectHook, selectBody, selectCTA]
+    [selectTopic, selectHook, selectBody, selectCTA]
   );
 
   const regenerateStep = useCallback(async (step: Step, params: any) => {
@@ -201,38 +229,42 @@ export function usePostGeneration(): UsePostGenerationReturn {
   }, []);
 
   const handleRegenerate = useCallback(() => {
+    const currentDeck = deckRef.current;
+    const currentHand = handRef.current;
     const p: Record<Step, any> = {
-      topics: { input: deck.topic || "general topics", researchDepth: settings.researchDepth },
-      hooks: { topic: deck.topic, intent: settings.intent },
+      topics: { input: currentDeck.topic || "general topics", researchDepth: settings.researchDepth },
+      hooks: { topic: currentDeck.topic, intent: settings.intent },
       body: {
-        hook: deck.hook,
-        topic: deck.topic,
+        hook: currentDeck.hook,
+        topic: currentDeck.topic,
         intent: settings.intent,
         length: settings.length,
       },
-      cta: { body: deck.body, intent: settings.intent },
+      cta: { body: currentDeck.body, intent: settings.intent },
     };
-    if (hand.type) regenerateStep(hand.type, p[hand.type]);
-  }, [deck, settings, hand.type, regenerateStep]);
+    if (currentHand.type) regenerateStep(currentHand.type, p[currentHand.type]);
+  }, [settings.researchDepth, settings.intent, settings.length, regenerateStep]);
 
   const handleRegenerateWithStyle = useCallback(
     (txt: string) => {
+      const currentDeck = deckRef.current;
+      const currentHand = handRef.current;
       const p: Record<Step, any> = {
-        topics: { input: deck.topic || "general topics", researchDepth: settings.researchDepth },
-        hooks: { topic: deck.topic, intent: settings.intent, styleGuidance: txt },
+        topics: { input: currentDeck.topic || "general topics", researchDepth: settings.researchDepth },
+        hooks: { topic: currentDeck.topic, intent: settings.intent, styleGuidance: txt },
         body: {
-          hook: deck.hook,
-          topic: deck.topic,
+          hook: currentDeck.hook,
+          topic: currentDeck.topic,
           intent: settings.intent,
           length: settings.length,
           styleGuidance: txt,
         },
-        cta: { body: deck.body, intent: settings.intent, styleGuidance: txt },
+        cta: { body: currentDeck.body, intent: settings.intent, styleGuidance: txt },
       };
       setSettings((p) => ({ ...p }));
-      if (hand.type) regenerateStep(hand.type, p[hand.type]);
+      if (currentHand.type) regenerateStep(currentHand.type, p[currentHand.type]);
     },
-    [deck, settings, hand.type, regenerateStep]
+    [settings.researchDepth, settings.intent, settings.length, regenerateStep]
   );
 
   const handleConfirmPolish = useCallback(async () => {
@@ -240,7 +272,8 @@ export function usePostGeneration(): UsePostGenerationReturn {
     setLoading(true);
     setError(null);
     try {
-      const d = `${deck.hook}\n\n${deck.body}\n\n${deck.cta}`;
+      const currentDeck = deckRef.current;
+      const d = `${currentDeck.hook}\n\n${currentDeck.body}\n\n${currentDeck.cta}`;
       const data = await polishPost({
         content: d,
         tone: settings.tone,
@@ -259,13 +292,14 @@ export function usePostGeneration(): UsePostGenerationReturn {
     } finally {
       setLoading(false);
     }
-  }, [deck, settings]);
+  }, [settings.tone, settings.emojiLevel, settings.language]);
 
   const handleRePolish = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const d = `${deck.hook}\n\n${deck.body}\n\n${deck.cta}`;
+      const currentDeck = deckRef.current;
+      const d = `${currentDeck.hook}\n\n${currentDeck.body}\n\n${currentDeck.cta}`;
       const data = await polishPost({
         content: d,
         tone: settings.tone,
@@ -284,7 +318,7 @@ export function usePostGeneration(): UsePostGenerationReturn {
     } finally {
       setLoading(false);
     }
-  }, [deck, settings]);
+  }, [settings.tone, settings.emojiLevel, settings.language]);
 
   const handleBack = useCallback(() => {
     if (navigationHistory.length === 0) return;
@@ -303,8 +337,8 @@ export function usePostGeneration(): UsePostGenerationReturn {
   }, [navigationHistory, optionsCache]);
 
   const handleCopy = useCallback(
-    () => navigator.clipboard.writeText(deck.final || ""),
-    [deck.final]
+    () => navigator.clipboard.writeText(deckRef.current.final || ""),
+    []
   );
   const handleEdit = useCallback(() => {
     setPhase("building");
