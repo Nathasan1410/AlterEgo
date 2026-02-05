@@ -2,6 +2,7 @@
 // All API calls to /api/generate endpoint
 
 import type { APIResponse, GeneratedOption } from "../types/api";
+import { logger } from "../utils/logger";
 
 export type GenerationType = "topics" | "hooks" | "body" | "cta";
 
@@ -75,7 +76,10 @@ export async function generateContent(
     const result = apiResponse.data.result || apiResponse.data.options || [];
     return { result };
   } catch (error) {
-    console.error(`Error generating ${type}:`, error);
+    logger.error(`Error generating ${type}`, error instanceof Error ? error : undefined, {
+      type,
+      params,
+    });
     return {
       result: [],
       error: error instanceof Error ? error.message : "Unknown error",
@@ -123,7 +127,7 @@ export async function polishPost(params: PolishParams): Promise<PolishResponse> 
       scores,
     };
   } catch (error) {
-    console.error("Error polishing post:", error);
+    logger.error("Error polishing post", error instanceof Error ? error : undefined, { params });
     return {
       result: "",
       error: error instanceof Error ? error.message : "Unknown error",
@@ -171,7 +175,9 @@ export async function generateCompletePost(params: {
       scores: apiResponse.data.scores,
     };
   } catch (error) {
-    console.error("Error generating complete post:", error);
+    logger.error("Error generating complete post", error instanceof Error ? error : undefined, {
+      params,
+    });
     return {
       result: "",
       error: error instanceof Error ? error.message : "Unknown error",

@@ -2,6 +2,7 @@
 // This is the core of ultra-personalization
 
 import Groq from "groq-sdk";
+import { logger } from "../utils/logger";
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -69,7 +70,9 @@ Return ONLY valid JSON, no markdown or explanation.`;
 
     return getDefaultStyleProfile();
   } catch (error) {
-    console.error("Style analysis error:", error);
+    logger.error("Style analysis error", error instanceof Error ? error : undefined, {
+      pastPostsCount: pastPosts.length,
+    });
     return getDefaultStyleProfile();
   }
 }
@@ -155,7 +158,9 @@ Return JSON format:
 
     return { score: 0.7, feedback: "Unable to analyze style match" };
   } catch (error) {
-    console.error("Style check error:", error);
+    logger.error("Style check error", error instanceof Error ? error : undefined, {
+      generatedContentLength: generatedContent.length,
+    });
     return { score: 0.7, feedback: "Style check failed" };
   }
 }

@@ -6,6 +6,7 @@ import { Groq } from "groq-sdk";
 import { PromptBuilder } from "../prompts/promptBuilder";
 import { IModelAdapter } from "./interfaces";
 import { JSONParser } from "../../utils/jsonParser";
+import { logger } from "../../utils/logger";
 import type {
   GeneratedOption,
   TopicInput,
@@ -77,7 +78,7 @@ export class GroqAdapter implements IModelAdapter {
       const content = completion.choices[0]?.message?.content || input.content;
       return { content };
     } catch (error) {
-      console.error("Polish error:", error);
+      logger.error("Polish error", error instanceof Error ? error : undefined, { input });
       return { content: input.content };
     }
   }
@@ -98,7 +99,10 @@ export class GroqAdapter implements IModelAdapter {
       const content = completion.choices[0]?.message?.content || "[]";
       return JSONParser.parseGeneratedContent(content, "array");
     } catch (error) {
-      console.error("Generation error:", error);
+      logger.error("Generation error", error instanceof Error ? error : undefined, {
+        prompt,
+        expectedCount,
+      });
       return Array(expectedCount)
         .fill(null)
         .map((_, i) => ({

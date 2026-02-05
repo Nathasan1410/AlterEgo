@@ -4,6 +4,7 @@
 
 import { tavily } from "@tavily/core";
 import { IResearchAdapter, ResearchResult } from "./interfaces";
+import { logger } from "../../utils/logger";
 
 export class TavilyAdapter implements IResearchAdapter {
   readonly name = "Tavily";
@@ -30,7 +31,10 @@ export class TavilyAdapter implements IResearchAdapter {
         score: r.score || 0,
       }));
     } catch (error) {
-      console.error("Tavily search error:", error);
+      logger.error("Tavily search error", error instanceof Error ? error : undefined, {
+        query,
+        maxResults,
+      });
       return [];
     }
   }

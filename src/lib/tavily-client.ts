@@ -2,6 +2,7 @@
 // Fetches trending news and context for LinkedIn posts
 
 import { tavily } from "@tavily/core";
+import { logger } from "../utils/logger";
 
 // Initialize Tavily client
 const tavilyClient = tavily({ apiKey: process.env.TAVILY_API_KEY || "" });
@@ -46,7 +47,10 @@ export async function searchTopic(
       })),
     };
   } catch (error) {
-    console.error("Tavily search error:", error);
+    logger.error("Tavily search error", error instanceof Error ? error : undefined, {
+      topic,
+      maxResults,
+    });
     return {
       query: topic,
       results: [],
