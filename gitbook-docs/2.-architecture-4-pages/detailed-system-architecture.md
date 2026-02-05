@@ -1,0 +1,2 @@
+# Detailed system architecture
+
