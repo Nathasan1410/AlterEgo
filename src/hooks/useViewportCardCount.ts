@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-interface UseViewportCardCountOptions {
+export interface UseViewportCardCountOptions {
   stepType: "topics" | "hooks" | "body" | "cta";
   isMobile: boolean;
   enabled?: boolean;
