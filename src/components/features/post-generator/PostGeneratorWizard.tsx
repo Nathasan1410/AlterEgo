@@ -11,9 +11,15 @@ import ResultPhase from "./ResultPhase";
 import { usePostGeneration } from "@/src/hooks/usePostGeneration";
 import type { Settings } from "./InputPhase";
 
+import MobilePostGeneratorWizard from "./mobile/MobilePostGeneratorWizard";
+
 export type { Settings };
 
+// PostGeneratorWizard Component
+// PostGeneratorWizard Component
 export default function PostGeneratorWizard() {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const postGenData = usePostGeneration();
   const {
     phase,
     deck,
@@ -23,7 +29,7 @@ export default function PostGeneratorWizard() {
     opikScores,
     isMobile,
     navigationHistory,
-    optionsCache,
+    originalPrompt,
     topicsPerPage,
     hooksPerPage,
     bodiesPerPage,
@@ -41,11 +47,19 @@ export default function PostGeneratorWizard() {
     reset,
     clearError,
     setSettings,
-    originalPrompt,
-  } = usePostGeneration();
+  } = postGenData;
 
+  // Mobile Render
+  if (isMobile) {
+    return <MobilePostGeneratorWizard {...postGenData} />;
+  }
+
+  // Desktop Render
   return (
-    <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl items-start justify-center gap-8 overflow-x-hidden px-12 py-6">
+
+    <div
+      className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl items-start justify-center gap-8 overflow-x-hidden px-12 py-6"
+    >
       <div className="flex max-w-3xl flex-1 flex-col" style={{ minHeight: "calc(100vh - 48px)" }}>
         {phase === "input" && (
           <InputPhase
@@ -168,8 +182,6 @@ export default function PostGeneratorWizard() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {phase === "building" && <MobileCanvas deck={deck} currentStep={hand.type} />}
     </div>
   );
 }

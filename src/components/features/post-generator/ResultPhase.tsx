@@ -28,7 +28,7 @@ export default function ResultPhase({
 }: ResultPhaseProps) {
   return (
     <div className="relative z-10 mx-auto w-full max-w-4xl p-4">
-      <div className="rounded-xl border border-gray-700 bg-black/40 p-8 shadow-2xl">
+      <div className="rounded-xl border border-gray-700 bg-black/40 p-4 shadow-2xl md:p-8">
         <div className="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <div>
             <h2 className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-2xl font-bold text-transparent">

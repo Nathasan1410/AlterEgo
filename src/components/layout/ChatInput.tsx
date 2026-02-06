@@ -84,7 +84,7 @@ export default function ChatInput({
           <div className="absolute -inset-1 rounded-3xl bg-orange-500 opacity-5 blur-2xl transition duration-500 group-hover:opacity-10"></div>
 
           {/* 1. Header Row (Model + Style + Settings) */}
-          <div className="relative z-30 mb-4 flex items-center justify-between border-b border-stone-200 pb-3 dark:border-zinc-800">
+          <div className="relative z-30 mb-4 flex flex-col gap-3 border-b border-stone-200 pb-3 md:flex-row md:items-center md:justify-between dark:border-zinc-800">
             {/* Model Selector */}
             <div className="group/model relative z-40">
               <button
@@ -121,15 +121,14 @@ export default function ChatInput({
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex w-full items-center justify-between gap-2 md:w-auto">
               {/* Style Profile Button - TEAL for Success/Active */}
               <button
                 onClick={onOpenStyleOnboarding}
-                className={`flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all ${
-                  hasStyleProfile
+                className={`flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all ${hasStyleProfile
                     ? "border-teal-200 bg-teal-50 text-teal-700 dark:border-teal-800 dark:bg-teal-900/20 dark:text-teal-400"
                     : "border-stone-200 bg-stone-100 text-stone-600 hover:bg-stone-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
-                }`}
+                  }`}
                 title="Personalize with your writing style"
               >
                 <Sparkles className="h-3.5 w-3.5" />
@@ -174,7 +173,7 @@ export default function ChatInput({
 
           {/* 3. Bottom Toolbar */}
           <div className="relative z-30 mt-4 flex flex-wrap items-center justify-between gap-3">
-            <div className="relative z-30 flex items-center gap-2">
+            <div className="relative z-30 flex flex-wrap items-center gap-2">
               {/* Voice Input */}
               <VoiceInput onTranscription={handleTranscription} />
 
@@ -202,11 +201,10 @@ export default function ChatInput({
               {/* Research Toggle (Blue) */}
               <button
                 onClick={() => setResearchMode(!researchMode)}
-                className={`relative z-30 flex cursor-pointer items-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  researchMode
+                className={`relative z-30 flex cursor-pointer items-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${researchMode
                     ? "border-sky-200 bg-sky-50 text-sky-600 dark:border-sky-800 dark:bg-sky-900/20 dark:text-sky-400"
                     : "border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400"
-                }`}
+                  }`}
                 title="Enable web research"
               >
                 <Globe className="h-3 w-3" />
@@ -216,11 +214,10 @@ export default function ChatInput({
               {/* Magic Toggle (Violet for AI) */}
               <button
                 onClick={() => setMagicMode(!magicMode)}
-                className={`relative z-30 cursor-pointer rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  magicMode
+                className={`relative z-30 cursor-pointer rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${magicMode
                     ? "border-violet-200 bg-violet-50 text-violet-600 shadow-sm dark:border-violet-800 dark:bg-violet-900/20 dark:text-violet-400"
                     : "border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400"
-                }`}
+                  }`}
               >
                 <span className="mr-1">✨</span> Magic
               </button>
