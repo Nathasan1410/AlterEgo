@@ -174,12 +174,37 @@ export default function StyleOnboarding({
                 {analyzedProfile.vocabulary.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {analyzedProfile.vocabulary.slice(0, 5).map((word, i) => (
-<span
+                      <span
                         key={i}
                         className="rounded-full border border-teal-100 bg-black/40 px-2 py-1 text-xs text-teal-700 shadow-sm dark:border-teal-800 dark:bg-zinc-800 dark:text-teal-300"
                       >
                         {word}
                       </span>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* Instructions */}
+            <div className="rounded-xl border border-stone-200 bg-stone-50 p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
+              <p className="text-sm text-stone-600 dark:text-zinc-300">
+                <strong className="text-orange-600 dark:text-orange-400">Tip:</strong> Paste 2-5 of
+                your best LinkedIn posts. The AI will learn your unique voice, tone, and writing
+                patterns to generate content that sounds exactly like you.
+              </p>
+            </div>
+
+            {/* Post inputs */}
+            <div className="space-y-4">
+              {posts.map((post, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="relative"
+                >
                   <div className="flex items-start gap-3">
                     <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-stone-200 bg-stone-100 text-sm font-bold text-stone-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
                       {index + 1}
