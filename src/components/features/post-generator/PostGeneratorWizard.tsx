@@ -17,9 +17,11 @@ export type { Settings };
 
 // PostGeneratorWizard Component
 // PostGeneratorWizard Component
-export default function PostGeneratorWizard() {
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  const postGenData = usePostGeneration();
+import { UsePostGenerationReturn } from "@/src/hooks/usePostGeneration";
+
+// PostGeneratorWizard Component
+export default function PostGeneratorWizard(props: UsePostGenerationReturn) {
+  const postGenData = props;
   const {
     phase,
     deck,
