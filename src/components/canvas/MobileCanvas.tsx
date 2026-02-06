@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { Sparkles, Target, FileText, Megaphone, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface MobileCanvasProps {
   deck: {
@@ -20,6 +20,14 @@ import { Search, Smile, Volume2, Settings as SettingsIcon } from "lucide-react";
 
 export default function MobileCanvas({ deck, currentStep, settings, originalPrompt }: MobileCanvasProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Auto-advance when step changes
+  useEffect(() => {
+    if (currentStep === "topics") setCurrentIndex(0);
+    if (currentStep === "hooks") setCurrentIndex(1);
+    if (currentStep === "body") setCurrentIndex(2);
+    if (currentStep === "cta") setCurrentIndex(3);
+  }, [currentStep]);
 
   // ORANGE THEME colors
   const pieces = [
@@ -92,10 +100,10 @@ export default function MobileCanvas({ deck, currentStep, settings, originalProm
                 key={piece.key}
                 onClick={() => setCurrentIndex(i)}
                 className={`h-1.5 rounded-full transition-all ${i === currentIndex
-                    ? `w-8 bg-gradient-to-r ${piece.color}`
-                    : piece.value
-                      ? `w-1.5 bg-gradient-to-r ${piece.color} opacity-50`
-                      : "w-1.5 bg-gray-300 dark:bg-gray-700"
+                  ? `w-8 bg-gradient-to-r ${piece.color}`
+                  : piece.value
+                    ? `w-1.5 bg-gradient-to-r ${piece.color} opacity-50`
+                    : "w-1.5 bg-gray-300 dark:bg-gray-700"
                   }`}
               />
             ))}
