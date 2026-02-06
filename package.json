@@ -16,7 +16,7 @@
     "evaluate": "npx tsx scripts/runEvaluation.ts"
   },
   "dependencies": {
-    "@react-three/fiber": "^9.5.0",
+    "@react-three/fiber": "^8.17.10",
     "@tavily/core": "^0.7.1",
     "@types/three": "^0.182.0",
     "class-variance-authority": "^0.7.1",
