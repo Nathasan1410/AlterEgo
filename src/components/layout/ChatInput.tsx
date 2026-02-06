@@ -108,7 +108,7 @@ export default function ChatInput({
                 </svg>
               </button>
 
-              <div className="invisible absolute left-0 top-full mt-2 w-48 origin-top-left transform rounded-xl border border-stone-200 bg-white opacity-0 shadow-xl transition-all group-hover/model:visible group-hover/model:opacity-100 dark:border-zinc-800 dark:bg-zinc-900">
+              <div className="invisible absolute left-0 top-full mt-2 w-48 origin-top-left transform rounded-xl border border-stone-700 bg-black/40 opacity-0 shadow-xl transition-all group-hover/model:visible group-hover/model:opacity-100">
                 {["Llama 3 (Fast)", "DeepSeek V3", "Mistral Large"].map((m) => (
                   <button
                     key={m}
@@ -167,7 +167,7 @@ export default function ChatInput({
               onChange={(e) => setTopic(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="What do you want to post about today? Type or use voice..."
-              className="relative z-10 min-h-[120px] w-full resize-none rounded-xl border border-stone-200 bg-white px-4 py-4 text-lg leading-relaxed text-stone-900 placeholder-stone-400 shadow-inner outline-none transition-all focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:placeholder-zinc-500"
+              className="relative z-10 min-h-[120px] w-full resize-none rounded-xl border border-stone-700 bg-black/40 px-4 py-4 text-lg leading-relaxed text-stone-900 placeholder-stone-400 shadow-inner outline-none transition-all focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:placeholder-zinc-500"
               autoFocus
             />
           </div>
@@ -284,10 +284,7 @@ export default function ChatInput({
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               className="absolute right-0 top-16 z-50 w-80"
             >
-              <Card
-                variant="glass"
-                className="border border-stone-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900"
-              >
+              <Card variant="glass" className="border border-stone-700 bg-black/40 shadow-xl">
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-sm font-bold text-stone-800 dark:text-zinc-100">
                     Studio Settings
