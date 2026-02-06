@@ -66,7 +66,7 @@ function AccordionItem({
       <button
         onClick={onToggle}
         disabled={isEmpty}
-        className="flex w-full items-start gap-3 p-4 text-left transition-colors hover:bg-black/5 disabled:cursor-not-allowed dark:hover:bg-white/5"
+        className="flex w-full items-start gap-3 p-4 text-left transition-colors hover:bg-black/5 disabled:cursor-not-allowed"
       >
         <div
           className={`rounded-lg p-2 ${!isEmpty ? `bg-gradient-to-br ${color}` : "bg-gray-200 dark:bg-gray-700"}`}

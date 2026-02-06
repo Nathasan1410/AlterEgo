@@ -105,10 +105,10 @@ export default function StyleOnboarding({
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           onClick={(e) => e.stopPropagation()}
-          className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-stone-200 bg-white shadow-2xl dark:border-zinc-700 dark:bg-zinc-900"
+          className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-stone-700 bg-black/40 shadow-2xl"
         >
           {/* Header */}
-          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-stone-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-stone-700 bg-black/40 p-6">
             <div className="flex items-center gap-3">
               <div className="rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 p-2 shadow-lg shadow-violet-500/20">
                 <Sparkles className="h-5 w-5 text-white" />
@@ -174,37 +174,12 @@ export default function StyleOnboarding({
                 {analyzedProfile.vocabulary.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {analyzedProfile.vocabulary.slice(0, 5).map((word, i) => (
-                      <span
+<span
                         key={i}
-                        className="rounded-full border border-teal-100 bg-white px-2 py-1 text-xs text-teal-700 shadow-sm dark:border-teal-800 dark:bg-zinc-800 dark:text-teal-300"
+                        className="rounded-full border border-teal-100 bg-black/40 px-2 py-1 text-xs text-teal-700 shadow-sm dark:border-teal-800 dark:bg-zinc-800 dark:text-teal-300"
                       >
                         {word}
                       </span>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
-            )}
-
-            {/* Instructions */}
-            <div className="rounded-xl border border-stone-200 bg-stone-50 p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
-              <p className="text-sm text-stone-600 dark:text-zinc-300">
-                <strong className="text-orange-600 dark:text-orange-400">Tip:</strong> Paste 2-5 of
-                your best LinkedIn posts. The AI will learn your unique voice, tone, and writing
-                patterns to generate content that sounds exactly like you.
-              </p>
-            </div>
-
-            {/* Post inputs */}
-            <div className="space-y-4">
-              {posts.map((post, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="relative"
-                >
                   <div className="flex items-start gap-3">
                     <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-stone-200 bg-stone-100 text-sm font-bold text-stone-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
                       {index + 1}
@@ -214,7 +189,7 @@ export default function StyleOnboarding({
                         value={post}
                         onChange={(e) => updatePost(index, e.target.value)}
                         placeholder={`Paste your LinkedIn post #${index + 1} here...`}
-                        className="min-h-[120px] w-full resize-none rounded-xl border border-stone-200 bg-white p-4 text-stone-900 placeholder-stone-400 outline-none transition-all focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+                        className="min-h-[120px] w-full resize-none rounded-xl border border-stone-700 bg-black/40 p-4 text-stone-900 placeholder-stone-400 outline-none transition-all focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
                       />
                       <div className="mt-2 flex items-center justify-between">
                         <span className="text-xs text-stone-400">
@@ -255,7 +230,7 @@ export default function StyleOnboarding({
           </div>
 
           {/* Footer */}
-          <div className="sticky bottom-0 flex gap-4 rounded-b-3xl border-t border-stone-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="sticky bottom-0 flex gap-4 rounded-b-3xl border-t border-stone-700 bg-black/40 p-6">
             <Button variant="secondary" onClick={onClose} className="flex-1">
               {analyzedProfile ? "Close" : "Skip for now"}
             </Button>
