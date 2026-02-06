@@ -47,7 +47,7 @@ export default function OpikScoreCard({ scores }: OpikScoreCardProps) {
           return (
             <div
               key={index}
-              className="relative flex flex-col gap-3 overflow-hidden rounded-xl border border-white/5 bg-white/5 p-4"
+              className="relative flex flex-col gap-3 overflow-hidden rounded-xl border border-white/5 bg-black/5 p-4"
             >
               {/* Header */}
               <div className="z-10 flex items-center justify-between">
@@ -61,7 +61,7 @@ export default function OpikScoreCard({ scores }: OpikScoreCardProps) {
               </div>
 
               {/* Progress Bar */}
-              <div className="z-10 h-2 w-full overflow-hidden rounded-full bg-white/10">
+              <div className="z-10 h-2 w-full overflow-hidden rounded-full bg-black/10">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${percentage}%` }}

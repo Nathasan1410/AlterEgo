@@ -44,7 +44,7 @@ export default function ConfirmationPhase({
       exit={{ opacity: 0, y: -20 }}
       className="mx-auto mt-8 max-w-3xl"
     >
-      <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-2xl dark:border-gray-700 dark:bg-gray-800">
+      <div className="rounded-3xl border border-gray-700 bg-black/40 p-8 shadow-2xl">
         <h2 className="mb-6 text-center text-3xl font-bold text-gray-900 dark:text-white">
           Ready to Polish?
         </h2>

@@ -36,7 +36,7 @@ export default function FocusSummary({ input, settings, onEdit }: FocusSummaryPr
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex w-full flex-col items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md md:flex-row"
+      className="flex w-full flex-col items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/40 p-4 backdrop-blur-md md:flex-row"
     >
       {/* Left: User Prompt */}
       <div className="min-w-0 flex-1">
@@ -49,7 +49,7 @@ export default function FocusSummary({ input, settings, onEdit }: FocusSummaryPr
           </h3>
           <button
             onClick={onEdit}
-            className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-white/5 hover:text-orange-500"
+            className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-black/5 hover:text-orange-500"
             title="Edit Prompt"
           >
             <Edit2 className="h-4 w-4" />

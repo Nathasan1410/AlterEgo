@@ -47,12 +47,12 @@ export default function ChatInput({
 
   const handleGenerate = () => {
     if (!topic.trim()) return;
-    const settingsToSave = { 
-      ...initialSettings, 
-      intent, 
-      length, 
-      magicMode, 
-      researchMode 
+    const settingsToSave = {
+      ...initialSettings,
+      intent,
+      length,
+      magicMode,
+      researchMode,
     };
     onSettingsChange(settingsToSave);
     onGenerate(topic, settingsToSave);
@@ -79,7 +79,7 @@ export default function ChatInput({
         className="group relative"
       >
         {/* Outer Container - Using Glass variant */}
-        <div className="relative z-10 rounded-3xl border border-white/50 bg-white/70 p-4 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-black/40">
+        <div className="relative z-10 rounded-3xl border border-white/10 bg-black/40 p-4 shadow-2xl backdrop-blur-xl">
           {/* Subtle Orange Glow (Reduced) */}
           <div className="absolute -inset-1 rounded-3xl bg-orange-500 opacity-5 blur-2xl transition duration-500 group-hover:opacity-10"></div>
 
@@ -228,7 +228,11 @@ export default function ChatInput({
 
             {/* PRIMARY ACTION - Strong Orange */}
             <Button
-              onClick={currentStep ? () => onRegenerate?.(topic, { intent, length, magicMode, researchMode }) : handleGenerate}
+              onClick={
+                currentStep
+                  ? () => onRegenerate?.(topic, { intent, length, magicMode, researchMode })
+                  : handleGenerate
+              }
               disabled={currentStep ? false : !topic.trim()}
               variant="primary"
               className="px-6 py-2 shadow-lg shadow-orange-500/20"

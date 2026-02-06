@@ -155,7 +155,7 @@ export default function PostGeneratorWizard() {
             transition={{ duration: 0.5 }}
             className="sticky top-10 hidden h-[calc(100vh-3rem)] w-96 lg:block"
           >
-            <div className="h-full overflow-hidden rounded-3xl border border-white/30 bg-white/20 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-black/20">
+            <div className="h-full overflow-hidden rounded-3xl border border-white/10 bg-black/20 shadow-2xl backdrop-blur-2xl">
               <Canvas deck={deck} currentStep={hand.type} settings={settings} />
             </div>
           </motion.div>

@@ -70,7 +70,7 @@ export default function MobileCanvas({ deck, currentStep }: MobileCanvasProps) {
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
-        className="rounded-t-3xl border-t-2 border-gray-200 bg-white/95 p-4 shadow-2xl backdrop-blur-xl dark:border-gray-700 dark:bg-gray-900/95"
+        className="rounded-t-3xl border-t-2 border-gray-700 bg-gray-900/95 p-4 shadow-2xl backdrop-blur-xl"
       >
         {/* Progress Dots */}
         <div className="mb-3 flex justify-center gap-2">

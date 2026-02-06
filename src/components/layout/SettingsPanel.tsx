@@ -31,16 +31,16 @@ export default function SettingsPanel({
       {/* Language Toggle */}
       <div>
         <label className="mb-2 block text-sm font-semibold text-gray-400">Language</label>
-        <div className="flex gap-2 rounded-xl border border-white/10 bg-white/5 p-1">
+        <div className="flex gap-2 rounded-xl border border-white/10 bg-black/5 p-1">
           <button
             onClick={() => setLanguage("id")}
-            className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${language === "id" ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20" : "text-gray-400 hover:bg-white/5 hover:text-white"}`}
+            className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${language === "id" ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20" : "text-gray-400 hover:bg-black/5 hover:text-white"}`}
           >
             Indonesia
           </button>
           <button
             onClick={() => setLanguage("en")}
-            className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${language === "en" ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20" : "text-gray-400 hover:bg-white/5 hover:text-white"}`}
+            className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${language === "en" ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20" : "text-gray-400 hover:bg-black/5 hover:text-white"}`}
           >
             English
           </button>
