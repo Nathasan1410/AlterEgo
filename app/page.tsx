@@ -1,44 +1,56 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import PostGeneratorWizard from "@/src/components/features/post-generator/PostGeneratorWizard";
-import DarkVeilBackground from "@/src/components/layout/DarkVeilBackground";
-import Sidebar from "@/src/components/layout/Sidebar";
-import { Linkedin } from "lucide-react";
+import HeroSection from "@/src/components/landing/HeroSection";
+import ProblemSection from "@/src/components/landing/ProblemSection";
+import SolutionSection from "@/src/components/landing/SolutionSection";
+import WorkflowSection from "@/src/components/landing/WorkflowSection";
+import VideosSection from "@/src/components/landing/VideosSection";
+import ScreenshotsCarousel from "@/src/components/landing/ScreenshotsCarousel";
+import MarketSection from "@/src/components/landing/MarketSection";
+import NewCompetitiveSection from "@/src/components/landing/NewCompetitiveSection";
+import ComparisonSection from "@/src/components/landing/ComparisonSection";
+import TechStackSection from "@/src/components/landing/TechStackSection";
+import CTASection from "@/src/components/landing/CTASection";
+import SocialLinks from "@/src/components/landing/SocialLinks";
+import Waves from "@/components/Waves";
 
 export default function Home() {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
-
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <DarkVeilBackground />
+    <main className="relative min-h-screen text-white">
+      {/* Background Layer - z-0 */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-[#050505]" />
+        <Waves
+          lineColor="#f97316"
+          backgroundColor="transparent"
+          waveSpeedX={0.02}
+          waveSpeedY={0.01}
+          waveAmpX={40}
+          waveAmpY={20}
+          friction={0.9}
+          tension={0.01}
+          maxCursorMove={120}
+          xGap={12}
+          yGap={36}
+        />
+        <div className="pointer-events-none absolute inset-0 bg-black/80" />
+      </div>
 
-      {/* Sidebar (Gemini Style) */}
-      <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-      />
-
-      {/* Main Content Area - Dynamic Padding */}
-      <motion.div
-        animate={{ paddingLeft: isSidebarCollapsed ? "72px" : "280px" }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="relative z-10 min-h-screen"
-      >
-        {/* Top Bar */}
-        <div className="absolute right-6 top-6 z-50">
-          <button className="flex items-center gap-2 rounded-full bg-[#0077b5] px-4 py-2 text-sm font-medium text-white shadow-lg shadow-blue-900/20 transition-colors hover:bg-[#006396]">
-            <Linkedin className="h-4 w-4" />
-            Connect LinkedIn
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="container mx-auto pt-4">
-          <PostGeneratorWizard />
-        </div>
-      </motion.div>
+      {/* Content Layer - z-10 */}
+      <div className="relative z-10">
+        <HeroSection />
+        <ProblemSection />
+        <SolutionSection />
+        <WorkflowSection />
+        <VideosSection />
+        <ScreenshotsCarousel />
+        <MarketSection />
+        <NewCompetitiveSection />
+        <ComparisonSection />
+        <TechStackSection />
+        <CTASection />
+        <SocialLinks />
+      </div>
     </main>
   );
 }

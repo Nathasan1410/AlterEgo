@@ -2,8 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AlterEgo - Your Professional AI Twin",
-  description: "Clone your writing style and ghostwrite viral LinkedIn posts with AI.",
+  title: "AlterEgo - AI-Powered LinkedIn Post Generator",
+  description:
+    "Transform your LinkedIn presence in minutes, not hours. AI-powered personal branding coach that clones your authentic writing style and crafts viral content. Powered by OPIK AI.",
+  keywords: ["LinkedIn", "AI", "Content Generation", "Personal Branding", "Social Media"],
+  openGraph: {
+    title: "AlterEgo - AI-Powered LinkedIn Post Generator",
+    description: "Transform your LinkedIn presence in minutes, not hours.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -13,9 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased">
-        {children}
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

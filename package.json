@@ -16,15 +16,24 @@
     "evaluate": "npx tsx scripts/runEvaluation.ts"
   },
   "dependencies": {
+    "@react-three/fiber": "^9.5.0",
     "@tavily/core": "^0.7.1",
+    "@types/three": "^0.182.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "framer-motion": "^12.29.0",
     "groq-sdk": "^0.5.0",
+    "gsap": "^3.14.2",
     "lucide-react": "^0.563.0",
     "next": "^16.1.4",
     "next-themes": "^0.4.6",
+    "ogl": "^1.0.11",
     "opik": "^1.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7",
+    "three": "^0.182.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
