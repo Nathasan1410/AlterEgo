@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { Skeleton } from "@/src/components/ui";
 import OptionCarousel from "./OptionCarousel";
-import ChatInput from "@/src/components/layout/ChatInput";
+
 
 export type HandType = {
   type: "topics" | "hooks" | "body" | "cta" | null;
@@ -120,20 +120,6 @@ export default function BuildingPhase({
         </AnimatePresence>
       </motion.div>
 
-      <motion.div
-        className="flex-shrink-0"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-      >
-        <ChatInput
-          onGenerate={onGenerate}
-          onRegenerate={onRegenerateWithStyle}
-          currentStep={hand.type}
-          initialSettings={settings}
-          onSettingsChange={onSettingsChange}
-        />
-      </motion.div>
     </>
   );
 }

@@ -37,6 +37,7 @@ export interface UsePostGenerationReturn {
   reset: () => void;
   clearError: () => void;
   setSettings: React.Dispatch<React.SetStateAction<Settings>>;
+  originalPrompt: string;
 }
 
 export function usePostGeneration(): UsePostGenerationReturn {
@@ -45,18 +46,18 @@ export function usePostGeneration(): UsePostGenerationReturn {
   const [error, setError] = useState<string | null>(null);
   const [deck, setDeck] = useState<DeckType>({ topic: "", hook: "", body: "", cta: "", final: "" });
   const [hand, setHand] = useState<HandType>({ type: null, options: null });
-  
+
   const handRef = useRef(hand);
   const deckRef = useRef(deck);
-  
+
   useEffect(() => {
     handRef.current = hand;
   }, [hand]);
-  
+
   useEffect(() => {
     deckRef.current = deck;
   }, [deck]);
-  
+
   const [settings, setSettings] = useState<Settings>({
     language: "id",
     emojiLevel: 5,
@@ -101,8 +102,11 @@ export function usePostGeneration(): UsePostGenerationReturn {
     enabled: hand.type === "cta",
   });
 
+  const [originalPrompt, setOriginalPrompt] = useState("");
+
   const handleStart = useCallback(
     async (topicInput: string, newSettings: Partial<Settings>) => {
+      setOriginalPrompt(topicInput);
       setSettings((p) => ({ ...p, ...newSettings }));
       setPhase("building");
       setLoading(true);
@@ -137,9 +141,9 @@ export function usePostGeneration(): UsePostGenerationReturn {
         setOptionsCache((p) => ({ ...p, [step]: currentOptions }));
       }
       setNavigationHistory((p) => [...p, step]);
-      setDeck((p) => ({ 
-        ...p, 
-        [step === "topics" ? "topic" : step === "hooks" ? "hook" : step]: option 
+      setDeck((p) => ({
+        ...p,
+        [step === "topics" ? "topic" : step === "hooks" ? "hook" : step]: option
       }));
       if (nextStep) {
         setLoading(true);
@@ -354,6 +358,7 @@ export function usePostGeneration(): UsePostGenerationReturn {
     setOptionsCache({} as Record<Step, (string | GeneratedOption)[] | undefined>);
     setOpikScores([]);
     setError(null);
+    setOriginalPrompt("");
   }, []);
 
   const clearError = useCallback(() => setError(null), []);
@@ -385,5 +390,6 @@ export function usePostGeneration(): UsePostGenerationReturn {
     reset,
     clearError,
     setSettings,
+    originalPrompt,
   };
 }

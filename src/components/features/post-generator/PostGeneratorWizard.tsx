@@ -41,6 +41,7 @@ export default function PostGeneratorWizard() {
     reset,
     clearError,
     setSettings,
+    originalPrompt,
   } = usePostGeneration();
 
   return (
@@ -156,7 +157,13 @@ export default function PostGeneratorWizard() {
             className="sticky top-10 hidden h-[calc(100vh-3rem)] w-96 lg:block"
           >
             <div className="h-full overflow-hidden rounded-3xl border border-white/10 bg-black/20 shadow-2xl backdrop-blur-2xl">
-              <Canvas deck={deck} currentStep={hand.type} settings={settings} />
+              <Canvas
+                deck={deck}
+                currentStep={hand.type}
+                settings={settings}
+                onSettingsChange={setSettings}
+                originalPrompt={originalPrompt}
+              />
             </div>
           </motion.div>
         )}

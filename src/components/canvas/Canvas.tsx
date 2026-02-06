@@ -8,6 +8,9 @@ import {
   Megaphone,
   Settings as SettingsIcon,
   ChevronRight,
+  Search,
+  Smile,
+  Volume2,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -20,6 +23,7 @@ interface CanvasProps {
   };
   currentStep: "topics" | "hooks" | "body" | "cta" | null;
   settings?: any;
+  originalPrompt?: string;
 }
 
 interface AccordionItemProps {
@@ -47,11 +51,10 @@ function AccordionItem({
 }: AccordionItemProps) {
   return (
     <motion.div
-      className={`relative overflow-hidden rounded-xl border-2 transition-all ${
-        isEmpty
-          ? "border-dashed border-gray-200 bg-gray-50 opacity-50 dark:border-gray-700 dark:bg-gray-800/30"
-          : `${bgColor} ${borderColor} shadow-lg`
-      }`}
+      className={`relative overflow-hidden rounded-xl border-2 transition-all ${isEmpty
+        ? "border-dashed border-gray-200 bg-gray-50 opacity-50 dark:border-gray-700 dark:bg-gray-800/30"
+        : `${bgColor} ${borderColor} shadow-lg`
+        }`}
       initial={{ opacity: 0, x: 20, scale: 0.9 }}
       animate={{ opacity: 1, x: 0, scale: 1 }}
     >
@@ -122,7 +125,9 @@ function AccordionItem({
   );
 }
 
-export default function Canvas({ deck, currentStep, settings }: CanvasProps) {
+import SettingsPanel from "../layout/SettingsPanel";
+
+export default function Canvas({ deck, currentStep, settings, onSettingsChange, originalPrompt }: CanvasProps & { onSettingsChange?: (settings: any) => void }) {
   const [expandedSection, setExpandedSection] = useState<string | null>("topic");
 
   // ORANGE THEME colors
@@ -186,9 +191,8 @@ export default function Canvas({ deck, currentStep, settings }: CanvasProps) {
         {pieces.map((piece, i) => (
           <div
             key={piece.key}
-            className={`h-1.5 flex-1 rounded-full transition-all ${
-              piece.value ? `bg-gradient-to-r ${piece.color}` : "bg-gray-200 dark:bg-gray-700"
-            }`}
+            className={`h-1.5 flex-1 rounded-full transition-all ${piece.value ? `bg-gradient-to-r ${piece.color}` : "bg-gray-200 dark:bg-gray-700"
+              }`}
           />
         ))}
       </div>
@@ -210,33 +214,60 @@ export default function Canvas({ deck, currentStep, settings }: CanvasProps) {
           />
         ))}
 
-        {/* Settings Summary */}
+        {/* Compact Settings Summary */}
         {settings && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/30"
+            className="mt-6 border-t border-white/10 pt-4"
           >
-            <div className="mb-2 flex items-center gap-2">
-              <SettingsIcon className="h-4 w-4 text-gray-500" />
-              <h4 className="text-xs font-bold text-gray-600 dark:text-gray-400">Settings</h4>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div>
-                <span className="text-gray-500">Intent:</span>
-                <span className="ml-1 font-semibold capitalize text-gray-700 dark:text-gray-300">
-                  {settings.intent}
-                </span>
+            <div className="bg-black/20 rounded-xl p-4 border border-white/5 space-y-3">
+              <div className="flex items-center gap-2 mb-1">
+                <SettingsIcon className="h-3.5 w-3.5 text-gray-400" />
+                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Settings</h4>
               </div>
-              <div>
-                <span className="text-gray-500">Length:</span>
-                <span className="ml-1 font-semibold capitalize text-gray-700 dark:text-gray-300">
+
+              {/* Prompt Section */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-medium text-gray-500 uppercase">Prompt :</span>
+                <p className="font-medium text-gray-200 text-sm leading-snug">
+                  {originalPrompt || deck.topic || "Drafting..."}
+                </p>
+              </div>
+
+              {/* Badges Row */}
+              <div className="flex flex-wrap gap-2 mt-2">
+                {/* Intent */}
+                <div className="px-2 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-medium text-gray-300 capitalize">
+                  {settings.intent}
+                </div>
+                {/* Length */}
+                <div className="px-2 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-medium text-gray-300 capitalize">
                   {settings.length}
-                </span>
+                </div>
+
+                {/* Research */}
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-medium text-gray-300" title="Research Depth">
+                  <Search className="w-3 h-3 text-sky-400" />
+                  <span>{settings.researchDepth}</span>
+                </div>
+
+                {/* Emoji */}
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-medium text-gray-300" title="Emoji Density">
+                  <Smile className="w-3 h-3 text-orange-400" />
+                  <span>{settings.emojiLevel}</span>
+                </div>
+
+                {/* Tone */}
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-medium text-gray-300" title="Voice / Tone">
+                  <Volume2 className="w-3 h-3 text-teal-400" />
+                  <span>{settings.tone}</span>
+                </div>
               </div>
             </div>
           </motion.div>
         )}
+
       </div>
     </div>
   );
