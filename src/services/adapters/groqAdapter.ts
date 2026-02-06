@@ -44,22 +44,22 @@ export class GroqAdapter implements IModelAdapter {
 
   async generateTopics(input: TopicInput, context?: TraceContext): Promise<GeneratedOption[]> {
     const prompt = PromptBuilder.buildTopicsPrompt(input);
-    return this.generateWithFallback(prompt, 6);
+    return this.generateWithFallback(prompt, 10);
   }
 
   async generateHooks(input: HookInput, context?: TraceContext): Promise<GeneratedOption[]> {
     const prompt = PromptBuilder.buildHooksPrompt(input);
-    return this.generateWithFallback(prompt, 3);
+    return this.generateWithFallback(prompt, 10);
   }
 
   async generateBody(input: BodyInput, context?: TraceContext): Promise<GeneratedOption[]> {
     const prompt = PromptBuilder.buildBodyPrompt(input);
-    return this.generateWithFallback(prompt, 2);
+    return this.generateWithFallback(prompt, 5);
   }
 
   async generateCTA(input: CTAInput, context?: TraceContext): Promise<GeneratedOption[]> {
     const prompt = PromptBuilder.buildCTAPrompt(input);
-    return this.generateWithFallback(prompt, 4);
+    return this.generateWithFallback(prompt, 8);
   }
 
   async polishContent(

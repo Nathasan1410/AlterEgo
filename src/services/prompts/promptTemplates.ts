@@ -5,7 +5,7 @@
 
 export const PROMPT_TEMPLATES = {
   TOPICS: `
-Generate 6 engaging LinkedIn post topics based on: "{{idea}}".
+Generate 10 engaging LinkedIn post topics based on: "{{idea}}".
 Research Depth: {{researchDepth}} (1=Simple, 5=Deep Dive)
 
 Return ONLY valid JSON array:
@@ -15,7 +15,7 @@ Return ONLY valid JSON array:
 `,
 
   HOOKS: `
-Write 3 distinct, high-engagement "Hooks" (opening lines) for a post about: "{{topic}}".
+Write 10 distinct, high-engagement "Hooks" (opening lines) for a post about: "{{topic}}".
 Intent: {{intent}}
 
 RULES:
@@ -38,7 +38,7 @@ Style Context: {{styleProfile}}
 Research Context: {{researchContext}}
 
 CRITICAL INSTRUCTIONS:
-1. Return a JSON ARRAY of exactly 2 objects
+1. Return a JSON ARRAY of exactly 5 objects
 2. Each object MUST have three fields: "content", "score", "reasoning"
 3. The "content" field MUST contain the FULL POST BODY TEXT (3-5 sentences minimum, actual post content)
 4. The "score" field MUST be a number between 1-100
@@ -68,7 +68,7 @@ INCORRECT Examples:
 `,
 
   CTA: `
-Generate 4 distinct Call-to-Actions (CTAs) for this post body:
+Generate 8 distinct Call-to-Actions (CTAs) for this post body:
 "{{bodyExcerpt}}..."
 Intent: {{intent}}
 

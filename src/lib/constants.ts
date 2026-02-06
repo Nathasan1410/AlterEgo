@@ -82,8 +82,8 @@ export const VIEWPORT = {
 } as const;
 
 export const GENERATION_COUNTS = {
-  TOPICS: 6,
-  HOOKS: 3,
-  BODY: 2,
-  CTA: 4,
+  TOPICS: 10,
+  HOOKS: 10,
+  BODY: 5,
+  CTA: 8,
 } as const;

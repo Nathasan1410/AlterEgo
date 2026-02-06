@@ -40,16 +40,18 @@ export function useViewportCardCount({
       const viewportHeight = window.innerHeight;
 
       // Account for UI elements
-      const headerHeight = 180; // ChatInput + padding
-      const footerHeight = 120; // Navigation controls + page counter
-      const titleHeight = 60; // Step title
-      const padding = 48; // Top/bottom padding
+      // ChatInput is removed, so less header space needed
+      const headerHeight = 100;
+      const footerHeight = 40;
+      const titleHeight = 50;
+      const padding = 20;
 
       const availableHeight = viewportHeight - headerHeight - footerHeight - titleHeight - padding;
 
       // Estimate card height based on step type
       // Body cards are taller due to more content
-      const estimatedCardHeight = stepType === "body" ? 280 : 160;
+      // Heavily increased body estimate to prevent internal scrolling
+      const estimatedCardHeight = stepType === "body" ? 400 : 140;
       const cardGap = 16; // gap-4 = 16px between cards
 
       // Calculate how many cards fit
@@ -57,10 +59,10 @@ export function useViewportCardCount({
 
       // Set limits based on step type
       const maxItems = {
-        topics: 6,
-        hooks: 4,
-        body: 1, // Force 1 per page for body
-        cta: 2,
+        topics: 12,
+        hooks: 12,
+        body: 3,
+        cta: 12,
       }[stepType];
 
       // Ensure at least 1 for body, 2 for others
