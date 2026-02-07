@@ -50,8 +50,8 @@ export default function SolutionSection() {
                   <Mic className="h-6 w-6 text-blue-500" />
                 </div>
               }
-              title="Voice Input"
-              description="Hands-free content creation. Speak your ideas and AI transforms them into polished posts."
+              title="Voice-Supported Drafting"
+              description="Hands-free personalization. Speak your ideas naturally and let AI capture your authentic style."
               size="sm"
             />
 

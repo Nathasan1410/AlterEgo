@@ -1,38 +1,38 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Target, Star, Gauge, Workflow, Globe2, Zap } from "lucide-react";
+import { Target, Star, Gauge, Gamepad2, Mic, Zap } from "lucide-react";
 
 const advantages = [
   {
-    icon: Target,
-    title: "Purpose-Built for LinkedIn",
-    description: "Not generic AI, optimized for LinkedIn's algorithm and best practices.",
+    icon: Gauge,
+    title: "Opik Observability",
+    description: "Unlike black-box generators, see exactly why text was chosen and get a predicted viral score. Don't just guess, know.",
+  },
+  {
+    icon: Gamepad2,
+    title: "Gamified Card Picker",
+    description: "You're in control. Easily pick topics and styles with a fun, hassle-free card interface. No more fighting with prompts.",
+  },
+  {
+    icon: Mic,
+    title: "Voice-Supported Creation",
+    description: "Describe your ideas naturally for deeper, faster personalization vs. typing.",
   },
   {
     icon: Star,
-    title: "Style Cloning",
-    description: "First-to-market digital twin technology. Clone your authentic voice.",
-  },
-  {
-    icon: Gauge,
-    title: "OPIK Observability",
-    description: "Real-time AI tracing and quality monitoring. Powered by OPIK AI.",
-  },
-  {
-    icon: Workflow,
-    title: "Agentic Workflow",
-    description: "Multi-agent system: Researcher → Drafting → Self-Correction.",
-  },
-  {
-    icon: Globe2,
-    title: "Multi-Language",
-    description: "Support for Indonesian and English. Reach global audiences.",
+    title: "Authentic Style Cloning",
+    description: "The core of AlterEgo, Clone your authentic voice with a personalized style.",
   },
   {
     icon: Zap,
-    title: "Sub-Second Inference",
-    description: "Powered by Groq Llama 3.3 70B. Lightning fast AI responses.",
+    title: "Multi-Agent Intelligence",
+    description: "Powered by advanced LLMs and Tavily for deep research and context-aware generation.",
+  },
+  {
+    icon: Target,
+    title: "Purpose-Built for LinkedIn",
+    description: "Optimized specifically for LinkedIn's algorithm and professional context. Not just generic AI.",
   },
 ];
 
@@ -46,9 +46,9 @@ export default function NewCompetitiveSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="mb-4 text-3xl font-bold text-white md:text-5xl">What Sets Us Apart</h2>
+          <h2 className="mb-4 text-3xl font-bold text-white md:text-5xl">Why AlterEgo is Different</h2>
           <p className="mx-auto max-w-2xl text-lg text-[#a3a3a3]">
-            Features that make AlterEgo the superior choice for LinkedIn content creation.
+            Features that put you in control and guarantee quality.
           </p>
         </motion.div>
 

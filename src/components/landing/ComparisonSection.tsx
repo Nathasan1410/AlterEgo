@@ -3,12 +3,27 @@
 import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 
-const competitors = [
+// Define the interface for type safety
+interface Competitor {
+  name: string;
+  styleCloning: boolean;
+  linkedinOptimization: boolean;
+  explainableAI: boolean;
+  gamifiedControl: boolean;
+  voiceFirst: boolean;
+  price: string;
+  speed: string;
+  isAlterEgo?: boolean;
+}
+
+const competitors: Competitor[] = [
   {
     name: "AlterEgo",
     styleCloning: true,
     linkedinOptimization: true,
-    observability: true,
+    explainableAI: true,
+    gamifiedControl: true,
+    voiceFirst: true,
     price: "Affordable",
     speed: "Sub-second",
     isAlterEgo: true,
@@ -17,7 +32,9 @@ const competitors = [
     name: "Jasper AI",
     styleCloning: false,
     linkedinOptimization: false,
-    observability: false,
+    explainableAI: false,
+    gamifiedControl: false,
+    voiceFirst: false,
     price: "$49/mo+",
     speed: "Slow",
   },
@@ -25,7 +42,9 @@ const competitors = [
     name: "Copy.ai",
     styleCloning: false,
     linkedinOptimization: false,
-    observability: false,
+    explainableAI: false,
+    gamifiedControl: false,
+    voiceFirst: false,
     price: "$36/mo+",
     speed: "Medium",
   },
@@ -33,7 +52,9 @@ const competitors = [
     name: "ChatGPT Plus",
     styleCloning: false,
     linkedinOptimization: false,
-    observability: false,
+    explainableAI: false,
+    gamifiedControl: false,
+    voiceFirst: true,
     price: "$20/mo",
     speed: "Fast",
   },
@@ -65,9 +86,8 @@ export default function ComparisonSection() {
                 {competitors.map((competitor) => (
                   <th
                     key={competitor.name}
-                    className={`p-4 font-semibold ${
-                      competitor.isAlterEgo ? "text-[#f97316]" : "text-white"
-                    }`}
+                    className={`p-4 font-semibold ${competitor.isAlterEgo ? "text-[#f97316]" : "text-white"
+                      }`}
                   >
                     {competitor.name}
                   </th>
@@ -85,8 +105,16 @@ export default function ComparisonSection() {
                   key: "linkedinOptimization",
                 },
                 {
-                  label: "Observability",
-                  key: "observability",
+                  label: "Explainable AI Scoring",
+                  key: "explainableAI",
+                },
+                {
+                  label: "Gamified Card Control",
+                  key: "gamifiedControl",
+                },
+                {
+                  label: "Voice-Supported Drafting",
+                  key: "voiceFirst",
                 },
                 {
                   label: "Price",
@@ -102,24 +130,27 @@ export default function ComparisonSection() {
                   className={`border-t border-[#262626] ${index % 2 === 0 ? "bg-[#0a0a0a]" : ""}`}
                 >
                   <td className="p-4 text-[#a3a3a3]">{feature.label}</td>
-                  {competitors.map((competitor) => (
-                    <td
-                      key={competitor.name}
-                      className={`p-4 ${competitor.isAlterEgo ? "text-[#f97316]" : ""}`}
-                    >
-                      {typeof competitor[feature.key as keyof typeof competitor] === "boolean" ? (
-                        competitor[feature.key as keyof typeof competitor] ? (
-                          <Check className="h-5 w-5 text-green-500" />
+                  {competitors.map((competitor) => {
+                    const value = competitor[feature.key as keyof Competitor];
+                    return (
+                      <td
+                        key={competitor.name}
+                        className={`p-4 ${competitor.isAlterEgo ? "text-[#f97316]" : ""}`}
+                      >
+                        {typeof value === "boolean" ? (
+                          value ? (
+                            <Check className="h-5 w-5 text-green-500" />
+                          ) : (
+                            <X className="h-5 w-5 text-red-500" />
+                          )
                         ) : (
-                          <X className="h-5 w-5 text-red-500" />
-                        )
-                      ) : (
-                        <span className="text-white">
-                          {competitor[feature.key as keyof typeof competitor]}
-                        </span>
-                      )}
-                    </td>
-                  ))}
+                          <span className="text-white">
+                            {value}
+                          </span>
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>
