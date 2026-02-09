@@ -4,11 +4,11 @@
 
 ## Quick Links
 
+- **[Pitchdeck Video](https://youtu.be/3SM2_FoUpeI?si=JTo3xD4ZKM2Kos9F)** - Pitchdeck Video presentation
+- **[Gitbook](https://nathasan1410.gitbook.io/alter-ego/)** - Project gitbook documentation
+- **[App](https://alter-ego-eta.vercel.app/)** - Project demo
+- **[Slides](https://www.canva.com/design/DAHAyB91oJo/ZxzoOCcyX-pjX3RvhlW2Pw/edit?utm_content=DAHAyB91oJo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)** - Presentation Slides
 - **[Documentation Index](./docs/README.md)** - All project documentation
-- **[Progress Report](./docs/PROGRESS-REPORT-03-02-26.md)** - Latest progress and milestones
-- **[Task Prioritization](./docs/task-prioritization.md)** - Task list and execution order
-- **[Clean Code Plan](./docs/clean-code-plan.md)** - File structure and refactoring standards
-- **[Issues & Fixes](./docs/issues-fixes.md)** - Identified issues and solutions
 
 ## Project Overview
 
