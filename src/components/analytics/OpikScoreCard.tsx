@@ -39,7 +39,7 @@ export default function OpikScoreCard({ scores }: OpikScoreCardProps) {
         <h3 className="text-lg font-bold text-white">Opik AI Quality Score</h3>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="flex flex-wrap gap-4">
         {scores.map((item, index) => {
           const percentage = Math.round(item.score * 100);
           const colorClass = getMetricColor(item.metricName);
@@ -47,7 +47,7 @@ export default function OpikScoreCard({ scores }: OpikScoreCardProps) {
           return (
             <div
               key={index}
-              className="relative flex flex-col gap-3 overflow-hidden rounded-xl border border-white/5 bg-black/5 p-4"
+              className="relative flex min-w-[200px] flex-1 flex-col gap-3 overflow-hidden rounded-xl border border-white/5 bg-black/5 p-4"
             >
               {/* Header */}
               <div className="z-10 flex items-center justify-between">
